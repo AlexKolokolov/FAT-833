@@ -3,7 +3,7 @@ package org.kolokolov
 import org.scalatest.FlatSpec
 
 /**
-  * Created by andersen on 20.03.2017.
+  * Created by Alexey Kolokolov on 20.03.2017.
   */
 class UtilsTest extends FlatSpec{
 
