@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory
   */
 object Utils {
 
-  val logger = LoggerFactory.getLogger("Utils logger")
+  private val logger = LoggerFactory.getLogger("Utils logger")
 
   def main(args: Array[String]): Unit = {
     println(sum(Some(1), Some(2), Some(3)))
