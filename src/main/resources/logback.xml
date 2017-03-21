@@ -7,7 +7,29 @@
         </encoder>
     </appender>
 
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/info.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <FileNamePattern>/path/to/info.%i.log.zip</FileNamePattern>
+            <MinIndex>1</MinIndex>
+            <MaxIndex>10</MaxIndex>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>2MB</MaxFileSize>
+        </triggeringPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>
+                %d{HH:mm:ss.SSS} %-5level [%thread] %logger{128} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
     <root level="DEBUG">
         <appender-ref ref="STDOUT" />
+        <!--<appender-ref ref="FILE" />-->
     </root>
+
+    <logger name="org.kolokolov" level="INFO">
+        <appender-ref ref="FILE" />
+    </logger>
 </configuration>

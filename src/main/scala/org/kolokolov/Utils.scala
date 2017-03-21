@@ -10,6 +10,7 @@ object Utils {
   private val logger = LoggerFactory.getLogger("Utils logger")
 
   def main(args: Array[String]): Unit = {
+    logger.info("Main method is running")
     println(sum(Some(1), Some(2), Some(3)))
   }
 
