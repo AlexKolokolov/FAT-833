@@ -26,4 +26,13 @@ object Collections {
     str.foreach(ch => map += (ch -> (map(ch) + 1)))
     map.toList
   }
+
+  def sortTupleList(tupleList: List[(Int,String)]): List[(Int,String)] = {
+    tupleList.view.map(_._1).sorted.toList zip tupleList.view.map(_._2).sorted.reverse.toList
+  }
+
+  def main(args: Array[String]): Unit = {
+    val list = List((8, "aaa"),(1, "bbb"),(5,"zzz"),(11,"fff"))
+    print(sortTupleList(list))
+  }
 }

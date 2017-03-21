@@ -10,6 +10,7 @@ class CollectionsTest extends FunSuite {
   private val xs = List("zero", "one", "two", "three", "four", "five", "six", "seven")
   private val testList = List(List(1,2,3), List(4), Nil, List(5, 6, 7))
   private val testString = "aaabbbccdefffab"
+  private val tupleList = List((8, "aaa"),(1, "bbb"),(5,"zzz"),(11,"fff"))
 
   test("zipToIndexes should return List((0, \"zero\"), (1, \"one\") ...)") {
     val expectedResult = List((0,"zero"),
@@ -45,5 +46,10 @@ class CollectionsTest extends FunSuite {
   test("countLetters should return List('a'-> 4, 'b' -> 4, 'c' -> 2, 'd' -> 1, 'e' -> 1, 'f' -> 3)") {
     val expectedResult = List('a'-> 4, 'b' -> 4, 'c' -> 2, 'd' -> 1, 'e' -> 1, 'f' -> 3)
     assert(Collections.countLetters(testString) == expectedResult)
+  }
+
+  test("sortTupleList should return List((1,\"zzz\"), (5,\"fff\"), (8,\"bbb\"), (11,\"aaa\"))") {
+    val expectedResult = List((1,"zzz"), (5,"fff"), (8,"bbb"), (11,"aaa"))
+    assert(Collections.sortTupleList(tupleList) == expectedResult)
   }
 }
