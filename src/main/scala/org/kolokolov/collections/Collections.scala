@@ -20,4 +20,10 @@ object Collections {
   def flattenSeq(collection: Seq[Seq[Any]]): Seq[Any] = {
     collection.flatten
   }
+
+  def countLetters(str: String): List[(Char,Int)] = {
+    val map = new scala.collection.mutable.TreeMap[Char,Int].withDefaultValue(0)
+    str.foreach(ch => map += (ch -> (map(ch) + 1)))
+    map.toList
+  }
 }

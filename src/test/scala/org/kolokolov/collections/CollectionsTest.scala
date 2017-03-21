@@ -7,8 +7,9 @@ import org.scalatest.FunSuite
   */
 class CollectionsTest extends FunSuite {
 
-  val xs = List("zero", "one", "two", "three", "four", "five", "six", "seven")
-  val testList = List(List(1,2,3), List(4), Nil, List(5, 6, 7))
+  private val xs = List("zero", "one", "two", "three", "four", "five", "six", "seven")
+  private val testList = List(List(1,2,3), List(4), Nil, List(5, 6, 7))
+  private val testString = "aaabbbccdefffab"
 
   test("zipToIndexes should return List((0, \"zero\"), (1, \"one\") ...)") {
     val expectedResult = List((0,"zero"),
@@ -41,5 +42,8 @@ class CollectionsTest extends FunSuite {
     assert(Collections.flattenSeq(testList) == expectedResult)
   }
 
-
+  test("countLetters should return List('a'-> 4, 'b' -> 4, 'c' -> 2, 'd' -> 1, 'e' -> 1, 'f' -> 3)") {
+    val expectedResult = List('a'-> 4, 'b' -> 4, 'c' -> 2, 'd' -> 1, 'e' -> 1, 'f' -> 3)
+    assert(Collections.countLetters(testString) == expectedResult)
+  }
 }
