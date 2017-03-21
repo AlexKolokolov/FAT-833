@@ -12,4 +12,8 @@ object Collections {
   def mapByLength(collection: List[String]): Map[Int,List[String]] = {
     collection.groupBy(_.length)
   }
+
+  def sortAndSplitByLength(collection: Seq[String], length: Int): (Seq[String],Seq[String]) = {
+    collection.sortWith(_.length < _.length).partition(_.length < length)
+  }
 }

@@ -29,4 +29,10 @@ class CollectionsTest extends FunSuite {
     assert(Collections.mapByLength(xs) == expectedResult)
   }
 
+  test("sortAndSplitByLength should return (List(\"one\", \"two\", \"six\"),List(\"zero\", \"four\", \"five\", \"three\", \"seven\"))") {
+    val expectedResult = (List("one", "two", "six"),
+                          List("zero", "four", "five", "three", "seven"))
+    assert(Collections.sortAndSplitByLength(xs,4) == expectedResult)
+  }
+
 }
