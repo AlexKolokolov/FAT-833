@@ -14,11 +14,13 @@ object Utils {
   }
 
   def sum(x: Option[Int], y: Option[Int], z: Option[Int]): Option[Int] = {
-    logger.info("Method sum is running")
-    for {
+    logger.debug("Method sum is running with x = {}, y = {} and z = {}", x, y, z)
+    val result = for {
       _x <- x
       _y <- y
       _z <- z
     } yield _x + _y + _z
+    logger.debug("Method sum returned {}", result)
+    result
   }
 }
