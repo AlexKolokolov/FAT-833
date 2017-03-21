@@ -5,7 +5,11 @@ package org.kolokolov.collections
   */
 object Collections {
 
-  def zipToIndexes(collection: Seq[Any]) = {
-    collection.zipWithIndex.map(t => t._2 -> t._1)
+  def zipToIndexes(collection: Seq[Any]): Seq[(Int,Any)] = {
+    collection.view.zipWithIndex.map(t => t._2 -> t._1)
+  }
+
+  def mapByLength(collection: List[String]): Map[Int,List[String]] = {
+    collection.groupBy(_.length)
   }
 }
