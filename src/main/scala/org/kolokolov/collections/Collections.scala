@@ -16,4 +16,8 @@ object Collections {
   def sortAndSplitByLength(collection: Seq[String], length: Int): (Seq[String],Seq[String]) = {
     collection.sortWith(_.length < _.length).partition(_.length < length)
   }
+
+  def flattenSeq(collection: Seq[Seq[Any]]): Seq[Any] = {
+    collection.flatten
+  }
 }

@@ -8,6 +8,7 @@ import org.scalatest.FunSuite
 class CollectionsTest extends FunSuite {
 
   val xs = List("zero", "one", "two", "three", "four", "five", "six", "seven")
+  val testList = List(List(1,2,3), List(4), Nil, List(5, 6, 7))
 
   test("zipToIndexes should return List((0, \"zero\"), (1, \"one\") ...)") {
     val expectedResult = List((0,"zero"),
@@ -34,5 +35,11 @@ class CollectionsTest extends FunSuite {
                           List("zero", "four", "five", "three", "seven"))
     assert(Collections.sortAndSplitByLength(xs,4) == expectedResult)
   }
+
+  test("flattenSeq should return List(1,2,3,4,5,6,7)") {
+    val expectedResult = List(1,2,3,4,5,6,7)
+    assert(Collections.flattenSeq(testList) == expectedResult)
+  }
+
 
 }
