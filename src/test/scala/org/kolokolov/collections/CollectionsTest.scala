@@ -11,8 +11,6 @@ class CollectionsTest extends FunSuite {
   private val testList = List(List(1,2,3), List(4), Nil, List(5, 6, 7))
   private val testString = "aaabbbccdefffab"
   private val tupleList = List((2, "aaa"), (3, "bbb"), (2, "rrr"),(1,"zzz"),(3,"fff"),(3,"zzz"))
-  private val intList1 = List(1,2,3,4,5)
-  private val intList2 = List(10,20,30,40,50)
 
   test("zipToIndexes should return List((0, \"zero\"), (1, \"one\") ...)") {
     val expectedResult = List((0,"zero"),
@@ -45,8 +43,8 @@ class CollectionsTest extends FunSuite {
     assert(Collections.flattenSeq(testList) == expectedResult)
   }
 
-  test("countLetters should return List('a'-> 4, 'b' -> 4, 'c' -> 2, 'd' -> 1, 'e' -> 1, 'f' -> 3)") {
-    val expectedResult = List('a'-> 4, 'b' -> 4, 'c' -> 2, 'd' -> 1, 'e' -> 1, 'f' -> 3)
+  test("countLetters should return List('a' -> 4, 'b' -> 4, 'c' -> 2, 'd' -> 1, 'e' -> 1, 'f' -> 3)") {
+    val expectedResult = List('a' -> 4, 'b' -> 4, 'c' -> 2, 'd' -> 1, 'e' -> 1, 'f' -> 3)
     assert(Collections.countLetters(testString) == expectedResult)
   }
 
@@ -55,8 +53,16 @@ class CollectionsTest extends FunSuite {
     assert(Collections.sortTupleList(tupleList) == expectedResult)
   }
 
-  test("sumCollectionsElements should return private val intList1 = List(11,22,33,44,55)") {
+  test("sumCollectionsElements should return List(11,22,33,44,55)") {
+    val intList1 = List(1,2,3,4,5)
+    val intList2 = List(10,20,30,40,50)
     val expectedResult = List(11,22,33,44,55)
     assert(Collections.sumCollectionsElements(intList1,intList2) == expectedResult)
+  }
+
+  test("mapDigitsToStrings should return List(\"zero\", \"five\", \"one\", \"four\", \"seven\"))") {
+    val initList = List(0, 5, 1, 4, 7)
+    val expectedResult = List("zero", "five", "one", "four", "seven")
+    assert(Collections.mapDigitsToStrings(initList) == expectedResult)
   }
 }
