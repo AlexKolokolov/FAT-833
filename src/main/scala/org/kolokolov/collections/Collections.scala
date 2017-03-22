@@ -24,10 +24,7 @@ object Collections {
   }
 
   def countLetters(str: String): List[(Char,Int)] = {
-    def addLetterToMap(letter: Char, map: TreeMap[Char,Int]): TreeMap[Char,Int] = {
-      map + (letter -> (map.getOrElse(letter, 0) + 1))
-    }
-    str.foldLeft(new TreeMap[Char,Int])((map, ch) => addLetterToMap(ch, map)).toList
+    str.view.groupBy(_.toChar).mapValues(_.length).toList.sorted
   }
 
   def sortTupleList(tupleList: List[(Int,String)]): List[(Int,String)] = {
