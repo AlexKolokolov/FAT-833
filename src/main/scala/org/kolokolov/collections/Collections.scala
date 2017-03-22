@@ -6,7 +6,7 @@ package org.kolokolov.collections
 object Collections {
 
   def zipToIndexes(collection: Seq[Any]): Seq[(Int,Any)] = {
-    collection.view.zipWithIndex.map(t => t._2 -> t._1)
+    collection.view.zipWithIndex.map(t => t._2 -> t._1).force
   }
 
   def mapByLength(collection: List[String]): Map[Int,List[String]] = {
