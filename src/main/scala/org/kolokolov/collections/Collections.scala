@@ -24,10 +24,10 @@ object Collections {
   }
 
   def countLetters(str: String): List[(Char,Int)] = {
-    str.view.groupBy(_.toChar).mapValues(_.length).toList.sorted
+    str.groupBy(ch => ch).mapValues(_.length).toList.sorted
   }
 
   def sortTupleList(tupleList: List[(Int,String)]): List[(Int,String)] = {
-    tupleList.view.map(_._1).sorted.toList zip tupleList.view.map(_._2).sorted.reverse.toList
+    tupleList.sortBy(_._2).reverse.sortBy(_._1)
   }
 }
