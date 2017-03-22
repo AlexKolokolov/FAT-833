@@ -1,7 +1,5 @@
 package org.kolokolov.collections
 
-import scala.collection.immutable.TreeMap
-
 /**
   * Created by andersen on 21.03.2017.
   */
@@ -28,6 +26,12 @@ object Collections {
   }
 
   def sortTupleList(tupleList: List[(Int,String)]): List[(Int,String)] = {
-    tupleList.sortBy(_._2).reverse.sortBy(_._1)
+    implicit object TupleOrdering extends Ordering[(Int,String)] {
+      override def compare(a: (Int,String), b: (Int,String)): Int = {
+        if (a._1 == b._1) -a._2.compareTo(b._2)
+        else a._1.compareTo(b._1)
+      }
+    }
+    tupleList.sorted
   }
 }
