@@ -1,7 +1,5 @@
 package org.kolokolov.collections
 
-import scala.collection.immutable.TreeMap
-
 /**
   * Created by andersen on 21.03.2017.
   */
