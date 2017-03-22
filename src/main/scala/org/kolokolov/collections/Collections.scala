@@ -1,5 +1,7 @@
 package org.kolokolov.collections
 
+import scala.collection.immutable.TreeMap
+
 /**
   * Created by andersen on 21.03.2017.
   */
@@ -22,12 +24,10 @@ object Collections {
   }
 
   def countLetters(str: String): List[(Char,Int)] = {
-    val map = new scala.collection.mutable.TreeMap[Char,Int].withDefaultValue(0)
-    str.foreach(ch => map += (ch -> (map(ch) + 1)))
-    map.toList
+    str.groupBy(ch => ch).mapValues(_.length).toList.sorted
   }
 
   def sortTupleList(tupleList: List[(Int,String)]): List[(Int,String)] = {
-    tupleList.view.map(_._1).sorted.toList zip tupleList.view.map(_._2).sorted.reverse.toList
+    tupleList.sortBy(_._2).reverse.sortBy(_._1)
   }
 }
