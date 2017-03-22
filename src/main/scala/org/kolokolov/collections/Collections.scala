@@ -34,4 +34,8 @@ object Collections {
     }
     tupleList.sorted
   }
+
+  def sumCollectionsElements(c1: Seq[Int], c2: Seq[Int]): Seq[Int] = {
+    c1.zip(c2).map(t => t._1 + t._2)
+  }
 }
