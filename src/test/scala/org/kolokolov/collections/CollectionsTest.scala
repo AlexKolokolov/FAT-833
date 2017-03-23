@@ -43,13 +43,32 @@ class CollectionsTest extends FunSuite {
     assert(Collections.flattenSeq(testList) == expectedResult)
   }
 
-  test("countLetters should return List('a'-> 4, 'b' -> 4, 'c' -> 2, 'd' -> 1, 'e' -> 1, 'f' -> 3)") {
-    val expectedResult = List('a'-> 4, 'b' -> 4, 'c' -> 2, 'd' -> 1, 'e' -> 1, 'f' -> 3)
+  test("countLetters should return List('a' -> 4, 'b' -> 4, 'c' -> 2, 'd' -> 1, 'e' -> 1, 'f' -> 3)") {
+    val expectedResult = List('a' -> 4, 'b' -> 4, 'c' -> 2, 'd' -> 1, 'e' -> 1, 'f' -> 3)
     assert(Collections.countLetters(testString) == expectedResult)
   }
 
   test("sortTupleList should return List((1,\"zzz\"), (5,\"fff\"), (8,\"bbb\"), (11,\"aaa\"))") {
     val expectedResult = List((1,"zzz"), (2,"rrr"), (2,"aaa"), (3,"zzz"), (3,"fff"), (3,"bbb"))
     assert(Collections.sortTupleList(tupleList) == expectedResult)
+  }
+
+  test("sumCollectionsElements should return List(11,22,33,44,55)") {
+    val intList1 = List(1,2,3,4,5)
+    val intList2 = List(10,20,30,40,50)
+    val expectedResult = List(11,22,33,44,55)
+    assert(Collections.sumCollectionsElements(intList1,intList2) == expectedResult)
+  }
+
+  test("mapDigitsToStrings should return List(\"zero\", \"five\", \"one\", \"four\", \"seven\"))") {
+    val initList = List(0, 5, 1, 4, 7)
+    val expectedResult = List("zero", "five", "one", "four", "seven")
+    assert(Collections.mapDigitsToStrings(initList) == expectedResult)
+  }
+
+  test("signChangeCounter should return 4") {
+    val list = List(1,-2,4,0,-1,-10,100, 101)
+    val expectedResult = 4
+    assert(Collections.signChangeCounter(list) == expectedResult)
   }
 }
