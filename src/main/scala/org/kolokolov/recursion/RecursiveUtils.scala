@@ -18,11 +18,11 @@ object RecursiveUtils {
 
   def findMinMax(xs: List[Int]): (Int,Int) ={
     @tailrec def findMinMaxRec(xs: List[Int], min: Int, max: Int): (Int,Int) = {
-      def biggerAndLess(a: Int, b: Int): (Int,Int) = {
-        if (a > b) (a,b) else (b,a)
+      def lessAndGreater(a: Int, b: Int): (Int,Int) = {
+        if (a < b) (a,b) else (b,a)
       }
       if (xs == Nil) (min,max)
-      else findMinMaxRec(xs.tail, biggerAndLess(xs.head, min)._2, biggerAndLess(xs.head, max)._1)
+      else findMinMaxRec(xs.tail, lessAndGreater(xs.head, min)._1, lessAndGreater(xs.head, max)._2)
     }
     findMinMaxRec(xs, xs.head, xs.head)
   }
