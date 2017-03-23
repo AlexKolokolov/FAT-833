@@ -1,11 +1,10 @@
 package org.kolokolov.recursion
 
 import org.kolokolov.helpers.MathHelpers._
-
 import scala.annotation.tailrec
 
 /**
-  * Created by andersen on 23.03.2017.
+  * Created by Alexey Kolokolov on 23.03.2017.
   */
 object RecursiveUtils {
 
