@@ -38,6 +38,4 @@ class RecursiveUtilsTest extends FunSuite {
     val isEven = (n: Int) => n % 2 == 0
     assert(RecursiveUtils.splitByPredicate(testList, isEven) == expectedResult)
   }
-
-
 }

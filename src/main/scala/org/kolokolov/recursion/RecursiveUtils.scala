@@ -11,7 +11,7 @@ object RecursiveUtils {
     @tailrec def findMaxRec(xs: List[Int], max: Int): Int = {
       xs match {
         case Nil => max
-        case _ if xs.head > max => findMaxRec(xs.tail, xs.head)
+        case h :: _ if h > max => findMaxRec(xs.tail, h)
         case _ => findMaxRec(xs.tail, max)
       }
     }
@@ -31,19 +31,25 @@ object RecursiveUtils {
 
   def splitByNegative(xs: List[Int]): (List[Int],List[Int]) = {
     @tailrec def splitRec(xs: List[Int], neg: List[Int], pos: List[Int]): (List[Int],List[Int]) = {
-      if (xs.isEmpty) (neg,pos)
-      else if (xs.head >= 0) splitRec(xs.tail, neg, pos :+ xs.head)
-      else splitRec(xs.tail, neg :+ xs.head, pos)
+      xs match {
+        case Nil => (neg, pos)
+        case h :: _ if h >= 0 => splitRec(xs.tail, neg, h :: pos)
+        case h :: _ => splitRec(xs.tail, h :: neg, pos)
+      }
     }
-    splitRec(xs, Nil, Nil)
+    val result = splitRec(xs, Nil, Nil)
+    (result._1.reverse, result._2.reverse)
   }
 
   def splitByPredicate(xs: List[Int], p: Int => Boolean): (List[Int],List[Int]) = {
     @tailrec def splitRec(xs: List[Int], first: List[Int], second: List[Int]): (List[Int],List[Int]) = {
-      if (xs.isEmpty) (first,second)
-      else if (p(xs.head)) splitRec(xs.tail, first :+ xs.head, second)
-      else splitRec(xs.tail, first, second :+ xs.head)
+      xs match {
+        case Nil => (first,second)
+        case h :: _ if p(h) => splitRec(xs.tail, h :: first, second)
+        case h :: _ => splitRec(xs.tail, first, h :: second)
+      }
     }
-    splitRec(xs, Nil, Nil)
+    val result = splitRec(xs, Nil, Nil)
+    (result._1.reverse, result._2.reverse)
   }
 }
