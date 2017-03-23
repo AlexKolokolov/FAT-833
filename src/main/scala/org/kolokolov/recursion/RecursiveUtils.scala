@@ -15,9 +15,4 @@ object RecursiveUtils {
     }
     findMaxRec(xs,xs.head)
   }
-
-  def main(args: Array[String]): Unit = {
-    val list = List(1, 5, 10, -1, 2, 13, 9, 11)
-    println(findMax(list))
-  }
 }
