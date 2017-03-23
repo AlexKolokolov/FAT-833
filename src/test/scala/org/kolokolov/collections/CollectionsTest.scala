@@ -65,4 +65,10 @@ class CollectionsTest extends FunSuite {
     val expectedResult = List("zero", "five", "one", "four", "seven")
     assert(Collections.mapDigitsToStrings(initList) == expectedResult)
   }
+
+  test("signChangeCounter should return 4") {
+    val list = List(1,-2,4,0,-1,-10,100, 101)
+    val expectedResult = 4
+    assert(Collections.signChangeCounter(list) == expectedResult)
+  }
 }

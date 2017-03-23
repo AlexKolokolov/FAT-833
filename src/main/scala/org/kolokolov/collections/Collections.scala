@@ -1,5 +1,7 @@
 package org.kolokolov.collections
 
+import scala.math._
+
 /**
   * Created by andersen on 21.03.2017.
   */
@@ -42,6 +44,10 @@ object Collections {
   def mapDigitsToStrings(collection: Seq[Int]): Seq[String] = {
     val dictionary = Map(0 -> "zero", 1 -> "one", 2 -> "two", 3 -> "three", 4 -> "four", 5 -> "five",
       6 -> "six", 7 -> "seven", 8 -> "eight", 9 -> "nine")
-    collection.map(dictionary(_))
+    collection.map(dictionary)
+  }
+
+  def signChangeCounter(collection: Seq[Int]): Int = {
+    collection.map(n => if (n == 0) 1 else signum(n)).sliding(2).count(arr => arr(0) != arr(1))
   }
 }
