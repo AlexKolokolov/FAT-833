@@ -15,4 +15,15 @@ object RecursiveUtils {
     }
     findMaxRec(xs,xs.head)
   }
+
+  def findMinMax(xs: List[Int]): (Int,Int) ={
+    @tailrec def findMinMaxRec(xs: List[Int], min: Int, max: Int): (Int,Int) = {
+      def biggerAndLess(a: Int, b: Int): (Int,Int) = {
+        if (a > b) (a,b) else (b,a)
+      }
+      if (xs == Nil) (min,max)
+      else findMinMaxRec(xs.tail, biggerAndLess(xs.head, min)._2, biggerAndLess(xs.head, max)._1)
+    }
+    findMinMaxRec(xs, xs.head, xs.head)
+  }
 }

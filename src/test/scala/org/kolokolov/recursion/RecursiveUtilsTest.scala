@@ -12,4 +12,10 @@ class RecursiveUtilsTest extends FunSuite {
     val expectedResult = 13
     assert(RecursiveUtils.findMax(testList) == expectedResult)
   }
+
+  test {"findMax should return (13, -1)"} {
+    val testList = List(1, 5, 10, -1, 2, 13, 9, 11)
+    val expectedResult = (-1, 13)
+    assert(RecursiveUtils.findMinMax(testList) == expectedResult)
+  }
 }
