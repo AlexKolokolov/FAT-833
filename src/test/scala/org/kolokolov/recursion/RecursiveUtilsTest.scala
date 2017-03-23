@@ -24,4 +24,20 @@ class RecursiveUtilsTest extends FunSuite {
     val expectedResult = (List(-1, -4),List(0, 5, 3))
     assert(RecursiveUtils.splitByNegative(testList) == expectedResult)
   }
+
+  test ("splitByPredicate should return (List(-1, -4),List(0, 5, 3))") {
+    val testList = List(0, 5, -1, 3, -4)
+    val expectedResult = (List(-1, -4),List(0, 5, 3))
+    val isNegative = (n: Int) => n < 0
+    assert(RecursiveUtils.splitByPredicate(testList, isNegative) == expectedResult)
+  }
+
+  test ("splitByPredicate should return (List(0, -4),List(5, -1, 3))") {
+    val testList = List(0, 5, -1, 3, -4)
+    val expectedResult = (List(0, -4),List(5, -1, 3))
+    val isEven = (n: Int) => n % 2 == 0
+    assert(RecursiveUtils.splitByPredicate(testList, isEven) == expectedResult)
+  }
+
+
 }

@@ -35,4 +35,13 @@ object RecursiveUtils {
     }
     splitRec(xs, Nil, Nil)
   }
+
+  def splitByPredicate(xs: List[Int], p: Int => Boolean): (List[Int],List[Int]) = {
+    @tailrec def splitRec(xs: List[Int], first: List[Int], second: List[Int]): (List[Int],List[Int]) = {
+      if (xs.isEmpty) (first,second)
+      else if (p(xs.head)) splitRec(xs.tail, first :+ xs.head, second)
+      else splitRec(xs.tail, first, second :+ xs.head)
+    }
+    splitRec(xs, Nil, Nil)
+  }
 }
