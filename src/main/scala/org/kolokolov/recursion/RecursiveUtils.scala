@@ -9,9 +9,11 @@ object RecursiveUtils {
 
   def findMax(xs: List[Int]): Int = {
     @tailrec def findMaxRec(xs: List[Int], max: Int): Int = {
-      if (xs.isEmpty) max
-      else if (xs.head > max) findMaxRec(xs.tail, xs.head)
-      else findMaxRec(xs.tail, max)
+      xs match {
+        case Nil => max
+        case _ if xs.head > max => findMaxRec(xs.tail, xs.head)
+        case _ => findMaxRec(xs.tail, max)
+      }
     }
     findMaxRec(xs,xs.head)
   }
