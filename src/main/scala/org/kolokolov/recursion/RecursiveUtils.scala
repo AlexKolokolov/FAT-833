@@ -1,5 +1,7 @@
 package org.kolokolov.recursion
 
+import org.kolokolov.helpers.MathHelpers._
+
 import scala.annotation.tailrec
 
 /**
@@ -20,9 +22,6 @@ object RecursiveUtils {
 
   def findMinMax(xs: List[Int]): (Int,Int) ={
     @tailrec def findMinMaxRec(xs: List[Int], min: Int, max: Int): (Int,Int) = {
-      def lessAndGreater(a: Int, b: Int): (Int,Int) = {
-        if (a < b) (a,b) else (b,a)
-      }
       if (xs.isEmpty) (min,max)
       else findMinMaxRec(xs.tail, lessAndGreater(xs.head, min)._1, lessAndGreater(xs.head, max)._2)
     }
