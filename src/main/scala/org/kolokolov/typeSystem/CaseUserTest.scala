@@ -1,7 +1,7 @@
 package org.kolokolov.typeSystem
 
 /**
-  * Created by andersen on 24.03.2017.
+  * Created by Alexey Kolokolov on 24.03.2017.
   */
 
 object CaseUserTest extends App{
