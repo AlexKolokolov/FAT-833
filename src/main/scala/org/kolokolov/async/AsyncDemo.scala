@@ -49,7 +49,5 @@ object AsyncDemo extends App {
   measureTime {
     println("Sync result: " + (countA + countB + countC))
   }
-
-  Thread.sleep(3000)
 }
 
