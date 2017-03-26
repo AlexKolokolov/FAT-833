@@ -23,8 +23,11 @@ object AsyncDemo2 extends App {
   }
 
   def sumAsync(a: => Int, b: => Int, c: => Int)(implicit ec: ExecutionContext): Future[Int] = {
+    val futureA = Future(a)
+    val futureB = Future(b)
+    val futureC = Future(c)
     async {
-      await(Future(countA)) + await(Future(countB)) + await(Future(countC))
+      await(futureA) + await(futureB) + await(futureC)
     }
   }
 
@@ -44,7 +47,5 @@ object AsyncDemo2 extends App {
   measureTime {
     println("Sync result: " + (countA + countB + countC))
   }
-
-  Thread.sleep(3000)
 }
 

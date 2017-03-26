@@ -23,10 +23,13 @@ object AsyncDemo extends App {
   }
 
   def sumAsync(a: => Int, b: => Int, c: => Int)(implicit ec: ExecutionContext): Future[Int] = {
+    val futureA = Future(a)
+    val futureB = Future(b)
+    val futureC = Future(c)
     for {
-      resA <- Future(a)
-      resB <- Future(b)
-      resC <- Future(c)
+      resA <- futureA
+      resB <- futureB
+      resC <- futureC
     } yield resA + resB + resC
   }
 
