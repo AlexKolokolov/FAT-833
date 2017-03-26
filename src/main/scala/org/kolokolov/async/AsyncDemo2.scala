@@ -1,12 +1,12 @@
 package org.kolokolov.async
 
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
+import scala.async.Async._
 
 /**
   * Created by Alexey Kolokolov on 24.03.2017.
   */
-object AsyncDemo extends App {
+object AsyncDemo2 extends App {
   def countA: Int = {
     Thread.sleep(2000)
     1
@@ -23,11 +23,9 @@ object AsyncDemo extends App {
   }
 
   def sumAsync(a: => Int, b: => Int, c: => Int)(implicit ec: ExecutionContext): Future[Int] = {
-    for {
-      resA <- Future(a)
-      resB <- Future(b)
-      resC <- Future(c)
-    } yield resA + resB + resC
+    async {
+      await(Future(countA)) + await(Future(countB)) + await(Future(countC))
+    }
   }
 
   def measureTime(block: => Unit): Unit = {

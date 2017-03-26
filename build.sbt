@@ -2,7 +2,7 @@ name := "fat-833"
 
 version := "1.1-SNAPSHOT"
 
-scalaVersion := "2.12.1"
+scalaVersion := "2.10.4"
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"  
 
@@ -10,3 +10,7 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
 
 libraryDependencies ++= Seq("org.slf4j" % "slf4j-api" % "1.7.25",
 														"ch.qos.logback" % "logback-classic" % "1.1.7")
+
+libraryDependencies += "org.scala-lang.modules" % "scala-async_2.10" % "0.9.5"
+
+

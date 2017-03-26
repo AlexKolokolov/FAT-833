@@ -13,7 +13,7 @@ class UtilsFunTest extends FunSuite {
   logger.info("UtilsFunTest is running")
 
   test("Utils.sum returns Some(6)") {
-    assert(Utils.sum(Some(1), Some(2), Some(3)).contains(6))
+    assert(Utils.sum(Some(1), Some(2), Some(3)) == Some(6))
   }
 
   test("Utils.sum returns None") {
