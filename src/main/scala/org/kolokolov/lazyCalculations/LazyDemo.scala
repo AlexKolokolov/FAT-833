@@ -8,10 +8,10 @@ import scala.annotation.tailrec
 object LazyDemo {
 
   def factorials(value: Long): Stream[Long] = {
-    @tailrec def tailFact(x: Long, fact: Long = 1): Long = {
+    @tailrec def tailFact(x: Long = 1, fact: Long = 1): Long = {
       if (x >= value) fact * x
       else tailFact(x + 1, fact * x)
     }
-    tailFact(1) #:: factorials(value + 1)
+    tailFact() #:: factorials(value + 1)
   }
 }
