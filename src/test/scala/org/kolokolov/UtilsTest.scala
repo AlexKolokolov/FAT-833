@@ -13,7 +13,7 @@ class UtilsTest extends FlatSpec {
   logger.info("UtilsTest is running")
 
   "Utils.sum" should "return Some(6)" in {
-    assert(Utils.sum(Some(1), Some(2), Some(3)) == Some(6))
+    assert(Utils.sum(Some(1), Some(2), Some(3)).contains(6))
   }
 
   it should "return None" in {

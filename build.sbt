@@ -2,7 +2,7 @@ name := "fat-833"
 
 version := "1.1-SNAPSHOT"
 
-scalaVersion := "2.10.4"
+scalaVersion := "2.12.1"
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"  
 

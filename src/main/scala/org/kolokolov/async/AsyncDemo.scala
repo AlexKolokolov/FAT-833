@@ -50,4 +50,3 @@ object AsyncDemo extends App {
     println("Sync result: " + (countA + countB + countC))
   }
 }
-
