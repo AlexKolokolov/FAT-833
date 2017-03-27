@@ -10,3 +10,7 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
 
 libraryDependencies ++= Seq("org.slf4j" % "slf4j-api" % "1.7.25",
 														"ch.qos.logback" % "logback-classic" % "1.1.7")
+
+libraryDependencies += "org.scala-lang.modules" % "scala-async_2.10" % "0.9.5"
+
+
