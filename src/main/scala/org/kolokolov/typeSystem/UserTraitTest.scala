@@ -3,8 +3,6 @@ package org.kolokolov.typeSystem
 /**
   * Created by Alexey Kolokolov on 24.03.2017.
   */
-
-
 object UserTraitTest extends App {
 
   trait User {
@@ -18,9 +16,7 @@ object UserTraitTest extends App {
   }
   println(u.fullName)
 
-  class BetterUser(val firstName: String, val lastName: String) extends User {
-    def fullName = s"$firstName $lastName"
+  implicit class BetterUser(user: User) {
+    def fullName: String = user.firstName + " " + user.lastName
   }
-
-  implicit def userToBetterUser(u: User): BetterUser = new BetterUser(u.firstName, u.lastName)
 }
