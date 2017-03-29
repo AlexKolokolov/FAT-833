@@ -1,7 +1,7 @@
 package org.kolokolov.slick.repo
 
-import slick.jdbc.PostgresProfile.api._
 import org.kolokolov.slick.domain._
+import slick.jdbc.JdbcProfile
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
@@ -9,11 +9,11 @@ import scala.concurrent.duration.Duration
 /**
   * Created by Alexey Kolokolov on 28.03.2017.
   */
-object GroupRepo {
+class GroupRepo(override val profile: JdbcProfile) extends UserGroupModule {
+
+  import profile.api._
+
   private val db = Database.forConfig("db.config")
-  private lazy val userTable = TableQuery[UserTable]
-  private lazy val groupTable = TableQuery[GroupTable]
-  private lazy val userGroupTable = TableQuery[UserGroupTable]
 
   def save(group: Group): Unit = {
     db.run(groupTable += group)
@@ -43,8 +43,8 @@ object GroupRepo {
         if group.id === userGroup.groupId
         if userGroup.userId === user.id
         if user.id === userId
-      } yield(group, user))
-    } result
+      } yield(group, user)
+    }.result
     Await.result(db.run(groupsByUserId), Duration(2, "second"))
   }
 }

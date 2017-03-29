@@ -1,7 +1,7 @@
 package org.kolokolov.slick.repo
 
-import slick.jdbc.PostgresProfile.api._
 import org.kolokolov.slick.domain._
+import slick.jdbc.JdbcProfile
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
@@ -9,11 +9,11 @@ import scala.concurrent.duration.Duration
 /**
   * Created by Alexey Kolokolov on 28.03.2017.
   */
-object UserRepo {
+class UserRepo(override val profile: JdbcProfile) extends UserGroupModule {
+
+  import profile.api._
+
   private val db = Database.forConfig("db.config")
-  private lazy val userTable = TableQuery[UserTable]
-  private lazy val groupTable = TableQuery[GroupTable]
-  private lazy val userGroupTable = TableQuery[UserGroupTable]
 
   def save(user: User): Unit = {
     db.run(userTable += user)
@@ -21,17 +21,18 @@ object UserRepo {
 
   def addUserToGroup(userId: Int, groupId: Int): Option[(User,Group)] = {
     db.run(userGroupTable += UserGroup(userId,groupId))
-    val userInGroup =
-    for {
-      userGroup <- userGroupTable
-      user <- userTable
-      group <- groupTable
-      if userGroup.groupId === groupId
-      if userGroup.userId === userId
-      if user.id === userGroup.userId
-      if group.id === userGroup.groupId
-    } yield (user, group)
-    Await.result(db.run(userInGroup.result), Duration(2, "second")).headOption
+    val userInGroup = {
+      for {
+        userGroup <- userGroupTable
+        user <- userTable
+        group <- groupTable
+        if userGroup.groupId === groupId
+        if userGroup.userId === userId
+        if user.id === userGroup.userId
+        if group.id === userGroup.groupId
+      } yield (user, group)
+    }.result
+    Await.result(db.run(userInGroup), Duration(2, "second")).headOption
   }
 
   def getAllUsers: Seq[User] = {
@@ -58,8 +59,8 @@ object UserRepo {
         if user.id === userGroup.userId
         if userGroup.groupId === group.id
         if group.id === groupId
-      } yield (user, group)
-    } result
+      } yield(user, group)
+    }.result
     Await.result(db.run(usersByGroupId), Duration(2, "second"))
   }
 }
