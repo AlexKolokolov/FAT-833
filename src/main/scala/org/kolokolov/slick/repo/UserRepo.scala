@@ -50,7 +50,7 @@ object UserRepo {
   }
 
   def getUsersByGroupId(groupId: Int): Seq[(User, Group)] = {
-    val usersByGroupId =
+    val usersByGroupId = {
       for {
         user <- userTable
         userGroup <- userGroupTable
@@ -59,6 +59,7 @@ object UserRepo {
         if userGroup.groupId === group.id
         if group.id === groupId
       } yield (user, group)
-    Await.result(db.run(usersByGroupId.result), Duration(2, "second"))
+    } result
+    Await.result(db.run(usersByGroupId), Duration(2, "second"))
   }
 }

@@ -9,7 +9,7 @@ import scala.concurrent.duration.Duration
 /**
   * Created by Alexey Kolokolov on 28.03.2017.
   */
-object GroupRepo{
+object GroupRepo {
   private val db = Database.forConfig("db.config")
   private lazy val userTable = TableQuery[UserTable]
   private lazy val groupTable = TableQuery[GroupTable]
@@ -35,7 +35,7 @@ object GroupRepo{
   }
 
   def getGroupsByUserId(userId: Int): Seq[(Group, User)] = {
-    val groupsByUserId =
+    val groupsByUserId = {
       for {
         group <- groupTable
         userGroup <- userGroupTable
@@ -43,7 +43,8 @@ object GroupRepo{
         if group.id === userGroup.groupId
         if userGroup.userId === user.id
         if user.id === userId
-      } yield (group, user)
-    Await.result(db.run(groupsByUserId.result), Duration(2, "second"))
+      } yield(group, user))
+    } result
+    Await.result(db.run(groupsByUserId), Duration(2, "second"))
   }
 }
