@@ -3,8 +3,7 @@ package org.kolokolov.slick.repo
 import org.kolokolov.slick.domain._
 import slick.jdbc.JdbcProfile
 
-import scala.concurrent.Await
-import scala.concurrent.duration.Duration
+import scala.concurrent.Future
 
 /**
   * Created by Alexey Kolokolov on 28.03.2017.
@@ -19,14 +18,14 @@ class GroupRepo(override val profile: JdbcProfile) extends UserGroupModule {
     db.run(groupTable += group)
   }
 
-  def getAllGroups: Seq[Group] = {
+  def getAllGroups: Future[Seq[Group]] = {
     val allGroups = groupTable.result
-    Await.result(db.run(allGroups), Duration(2, "second"))
+    db.run(allGroups)
   }
 
-  def getGroupById(id: Int): Option[Group] = {
-    val groupById = groupTable.filter(_.id === id).result
-    Await.result(db.run(groupById), Duration(2, "second")).headOption
+  def getGroupById(id: Int): Future[Option[Group]] = {
+    val groupById = groupTable.filter(_.id === id).result.headOption
+    db.run(groupById)
   }
 
   def deleteGroupById(id: Int): Unit = {
@@ -34,7 +33,7 @@ class GroupRepo(override val profile: JdbcProfile) extends UserGroupModule {
     db.run(deleteGroupById)
   }
 
-  def getGroupsByUserId(userId: Int): Seq[(Group, User)] = {
+  def getGroupsByUserId(userId: Int): Future[Seq[(Group, User)]] = {
     val groupsByUserId = {
       for {
         group <- groupTable
@@ -45,6 +44,6 @@ class GroupRepo(override val profile: JdbcProfile) extends UserGroupModule {
         if user.id === userId
       } yield(group, user)
     }.result
-    Await.result(db.run(groupsByUserId), Duration(2, "second"))
+    db.run(groupsByUserId)
   }
 }

@@ -14,24 +14,12 @@ class UserRepo(override val profile: JdbcProfile) extends UserGroupModule {
 
   private val db = Database.forConfig("db.config")
 
-  def save(user: User): Unit = {
+  def save(user: User): Future[Int] = {
     db.run(userTable += user)
   }
 
-  def addUserToGroup(userId: Int, groupId: Int): Future[Option[(User,Group)]] = {
+  def addUserToGroup(userId: Int, groupId: Int): Future[Int] = {
     db.run(userGroupTable += UserGroup(userId,groupId))
-    val userInGroup = {
-      for {
-        userGroup <- userGroupTable
-        user <- userTable
-        group <- groupTable
-        if userGroup.groupId === groupId
-        if userGroup.userId === userId
-        if user.id === userGroup.userId
-        if group.id === userGroup.groupId
-      } yield (user, group)
-    }.result.headOption
-    db.run(userInGroup)
   }
 
   def getAllUsers: Future[Seq[User]] = {
@@ -44,7 +32,7 @@ class UserRepo(override val profile: JdbcProfile) extends UserGroupModule {
     db.run(userById)
   }
 
-  def deleteUserById(id: Int): Unit = {
+  def deleteUserById(id: Int): Future[Int] = {
     val userById = userTable.filter(_.id === id).delete
     db.run(userById)
   }
