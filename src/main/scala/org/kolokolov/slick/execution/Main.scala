@@ -1,7 +1,7 @@
 package org.kolokolov.slick.execution
 
 import org.kolokolov.slick.repo.UserRepo
-import slick.jdbc.PostgresProfile
+import slick.jdbc.{H2Profile, PostgresProfile}
 
 /**
   * Created by kolokolov on 3/29/17.

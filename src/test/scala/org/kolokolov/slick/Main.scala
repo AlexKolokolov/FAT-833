@@ -12,6 +12,11 @@ object Main extends App {
   val dataBaseManager = new DataBaseManager(H2Profile)
   dataBaseManager.setupDB
 
-//  val userRepo = new UserRepo(H2Profile)
+  Thread.sleep(5000)
 
+  val userRepo = new UserRepo(H2Profile)
+  println(userRepo.getAllUsers)
+  println(userRepo.getUsersByGroupId(1))
+
+  Thread.sleep(5000)
 }

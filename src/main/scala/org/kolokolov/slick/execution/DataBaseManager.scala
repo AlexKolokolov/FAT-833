@@ -13,7 +13,6 @@ class DataBaseManager(override val profile: JdbcProfile) extends UserGroupModule
   private val db = Database.forConfig("db.config")
 
   def setupDB: Unit = {
-    println("Connecting to database... ")
     val setup = DBIO.seq(
       groupTable.schema.create,
       userTable.schema.create,
