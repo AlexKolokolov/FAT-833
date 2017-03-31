@@ -26,7 +26,7 @@ class UserRepoTest extends AsyncFunSuite
   }
 
   test("getUserById(1) should return User(Bob Marley, 1)") {
-    userRepo.getUserById(1).map {
+    userRepo.getById(1).map {
       result => result shouldEqual Some(userRepo.User("Bob Marley",1))
     }
   }
@@ -38,16 +38,16 @@ class UserRepoTest extends AsyncFunSuite
   }
 
   test("getAllUsers should return Seq(User(Bob Marley,1), User(Ron Perlman, 2), User(Tom Waits, 3))") {
-    userRepo.getAllUsers.map {
+    userRepo.getAll.map {
       result => result shouldEqual Seq(userRepo.User("Bob Marley", 1), userRepo.User("Ron Perlman", 2), userRepo.User("Tom Waits", 3))
     }
   }
 
   test("getUserById(1) should return None after deleteUser(1)") {
-    userRepo.deleteUserById(1).flatMap {
+    userRepo.deleteById(1).flatMap {
       delRes => {
         delRes shouldEqual 1
-        userRepo.getUserById(1).map {
+        userRepo.getById(1).map {
           result => result shouldEqual None
         }
       }
@@ -72,7 +72,7 @@ class UserRepoTest extends AsyncFunSuite
     userRepo.save(userRepo.User("Johnny Cash")).flatMap(
       addRes => {
         addRes shouldEqual 1
-        userRepo.getAllUsers.map {
+        userRepo.getAll.map {
           result => result.length shouldEqual 4
         }
       }

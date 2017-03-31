@@ -7,15 +7,13 @@ trait GroupModule extends DataBaseProfile {
 
   import profile.api._
 
-  class GroupTable(tag: Tag) extends Table[Group](tag, "group_table") {
+  class GroupTable(tag: Tag) extends Table[Group](tag, "group_table") with Identifiable {
     def name = column[String]("group_name")
     def id = column[Int]("group_id", O.PrimaryKey, O.AutoInc)
     def * = (name, id) <> (Group.tupled, Group.unapply)
   }
 
-  case class Group(name: String, id: Int = 0)
-
-  lazy val groupTable = TableQuery[GroupTable]
+  val groupTable = TableQuery[GroupTable]
 }
 
 

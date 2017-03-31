@@ -26,7 +26,7 @@ class GroupRepoTest extends AsyncFunSuite
   }
 
   test("getGroupById(2) should return Group(Admin, 2)") {
-    groupRepo.getGroupById(2).map {
+    groupRepo.getById(2).map {
       result => result shouldEqual Some(groupRepo.Group("Admin",2))
     }
   }
@@ -38,16 +38,16 @@ class GroupRepoTest extends AsyncFunSuite
   }
 
   test("getAllGroups should return Seq(Group(User,1), Group(Admin, 2))") {
-    groupRepo.getAllGroups.map {
+    groupRepo.getAll.map {
       result => result shouldEqual Seq(groupRepo.Group("User",1),groupRepo.Group("Admin",2))
     }
   }
 
   test("getGroupById(1) should return None after deleteGroup(1)") {
-    groupRepo.deleteGroupById(1).flatMap {
+    groupRepo.deleteById(1).flatMap {
       delRes => {
         delRes shouldEqual 1
-        groupRepo.getGroupById(1).map {
+        groupRepo.getById(1).map {
           result => result shouldEqual None
         }
       }
@@ -58,7 +58,7 @@ class GroupRepoTest extends AsyncFunSuite
     groupRepo.save(groupRepo.Group("Developer")).flatMap(
       addRes => {
         addRes shouldEqual 1
-        groupRepo.getAllGroups.map {
+        groupRepo.getAll.map {
           result => result.length shouldEqual 3
         }
       }

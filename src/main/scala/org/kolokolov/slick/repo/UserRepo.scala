@@ -8,33 +8,16 @@ import scala.concurrent.Future
 /**
   * Created by Alexey Kolokolov on 28.03.2017.
   */
-class UserRepo(override val profile: JdbcProfile) extends UserGroupModule {
+class UserRepo(override val profile: JdbcProfile) extends Repo[User] with UserGroupModule {
 
   import profile.api._
 
-  private val db = Database.forConfig("db.config")
+  override protected val table = userTable
 
-  def save(user: User): Future[Int] = {
-    db.run(userTable += user)
-  }
+  private val db = Database.forConfig("db.config")
 
   def addUserToGroup(userId: Int, groupId: Int): Future[Int] = {
     db.run(userGroupTable += UserGroup(userId,groupId))
-  }
-
-  def getAllUsers: Future[Seq[User]] = {
-    val allUsers = userTable.result
-    db.run(allUsers)
-  }
-
-  def getUserById(id: Int): Future[Option[User]] = {
-    val userById = userTable.filter(_.id === id).result.headOption
-    db.run(userById)
-  }
-
-  def deleteUserById(id: Int): Future[Int] = {
-    val userById = userTable.filter(_.id === id).delete
-    db.run(userById)
   }
 
   def getUsersByGroupId(groupId: Int): Future[Seq[(User, Group)]] = {

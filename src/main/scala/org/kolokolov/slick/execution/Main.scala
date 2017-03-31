@@ -14,7 +14,7 @@ object Main extends App{
   Thread.sleep(2000)
 
   val userRepo = new UserRepo(PostgresProfile)
-  println(userRepo.getAllUsers)
+  println(userRepo.getAll)
 
   Thread.sleep(2000)
 
