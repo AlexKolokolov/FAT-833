@@ -4,7 +4,9 @@ version := "1.2-SNAPSHOT"
 
 scalaVersion := "2.12.1"
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"  
+parallelExecution in Test := false
+
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
 
 //libraryDependencies += "org.specs2" % "specs2_2.9.1" % "1.12.4"
 

@@ -1,6 +1,5 @@
 package org.kolokolov.slick
 
-import org.kolokolov.slick.execution.DataBaseManager
 import org.kolokolov.slick.repo.UserRepo
 import org.scalatest.{AsyncFunSuite, BeforeAndAfterEach, Matchers}
 import slick.jdbc.H2Profile
@@ -15,15 +14,15 @@ class UserRepoTest extends AsyncFunSuite
   with Matchers
   with BeforeAndAfterEach {
 
-  private val dataBaseManager = new DataBaseManager(H2Profile)
+  private val testDataBaseManager = new TestDataBaseManager(H2Profile)
   private val userRepo = new UserRepo(H2Profile)
 
-  override def beforeEach = {
-    Await.result(dataBaseManager.setupDB, Duration(10, "sec"))
+  override def beforeEach: Unit = {
+    Await.result(testDataBaseManager.setupDB, Duration(10, "sec"))
   }
 
-  override def afterEach = {
-    Await.result(dataBaseManager.cleanDB, Duration(10, "sec"))
+  override def afterEach: Unit = {
+    Await.result(testDataBaseManager.cleanDB, Duration(10, "sec"))
   }
 
   test("getUserById(1) should return User(Bob Marley, 1)") {
@@ -32,7 +31,7 @@ class UserRepoTest extends AsyncFunSuite
     }
   }
 
-  test("getUserByGroupId(2) should return Seq((User(Tom Waits, 3), Group(Admin, 2)))") {
+  test("getUsersByGroupId(2) should return Seq((User(Tom Waits, 3), Group(Admin, 2)))") {
     userRepo.getUsersByGroupId(2).map {
       result => result shouldEqual Seq((userRepo.User("Tom Waits",3), userRepo.Group("Admin", 2)))
     }
@@ -46,8 +45,11 @@ class UserRepoTest extends AsyncFunSuite
 
   test("getUserById(1) should return None after deleteUser(1)") {
     userRepo.deleteUserById(1).flatMap {
-      delRes => userRepo.getUserById(1).map {
-        result => result shouldEqual None
+      delRes => {
+        delRes shouldEqual 1
+        userRepo.getUserById(1).map {
+          result => result shouldEqual None
+        }
       }
     }
   }

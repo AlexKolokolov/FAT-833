@@ -14,7 +14,7 @@ class GroupRepo(override val profile: JdbcProfile) extends UserGroupModule {
 
   private val db = Database.forConfig("db.config")
 
-  def save(group: Group): Unit = {
+  def save(group: Group): Future[Int] = {
     db.run(groupTable += group)
   }
 
@@ -28,7 +28,7 @@ class GroupRepo(override val profile: JdbcProfile) extends UserGroupModule {
     db.run(groupById)
   }
 
-  def deleteGroupById(id: Int): Unit = {
+  def deleteGroupById(id: Int): Future[Int] = {
     val deleteGroupById = groupTable.filter(_.id === id).delete
     db.run(deleteGroupById)
   }

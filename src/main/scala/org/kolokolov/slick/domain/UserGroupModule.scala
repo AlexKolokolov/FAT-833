@@ -14,7 +14,8 @@ trait UserGroupModule extends UserModule with GroupModule {
     def pk = primaryKey("primary_key", (userId, groupId))
     def user = foreignKey("user_fk", userId, userTable)(_.id,
       onDelete = ForeignKeyAction.Cascade)
-    def group = foreignKey("group_fk", groupId, groupTable)(_.id)
+    def group = foreignKey("group_fk", groupId, groupTable)(_.id,
+      onDelete = ForeignKeyAction.Cascade)
   }
 
   case class UserGroup(userId: Int, groupId: Int)
