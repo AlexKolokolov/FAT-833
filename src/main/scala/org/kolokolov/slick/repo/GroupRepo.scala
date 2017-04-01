@@ -8,13 +8,13 @@ import scala.concurrent.Future
 /**
   * Created by Alexey Kolokolov on 28.03.2017.
   */
-class GroupRepo(override val profile: JdbcProfile) extends Repo[Group] with UserGroupModule {
+class GroupRepo(override val profile: JdbcProfile) extends Repo[Group] {
 
   import profile.api._
 
-  override protected val table = groupTable
-
-  private val db = Database.forConfig("db.config")
+  override def dataTable: TableQuery[Table[Group]] = {
+    groupTable.asInstanceOf[TableQuery[Table[Group]]]
+  }
 
   def getGroupsByUserId(userId: Int): Future[Seq[(Group, User)]] = {
     val groupsByUserId = {

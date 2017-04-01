@@ -8,13 +8,13 @@ import scala.concurrent.Future
 /**
   * Created by Alexey Kolokolov on 28.03.2017.
   */
-class UserRepo(override val profile: JdbcProfile) extends Repo[User] with UserGroupModule {
+class UserRepo(override val profile: JdbcProfile) extends Repo[User] {
 
   import profile.api._
 
-  override protected val table = userTable
-
-  private val db = Database.forConfig("db.config")
+  override def dataTable: TableQuery[Table[User]] = {
+    userTable.asInstanceOf[TableQuery[Table[User]]]
+  }
 
   def addUserToGroup(userId: Int, groupId: Int): Future[Int] = {
     db.run(userGroupTable += UserGroup(userId,groupId))
@@ -33,4 +33,5 @@ class UserRepo(override val profile: JdbcProfile) extends Repo[User] with UserGr
     }.result
     db.run(usersByGroupId)
   }
+
 }

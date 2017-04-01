@@ -1,5 +1,6 @@
 package org.kolokolov.slick
 
+import org.kolokolov.slick.domain.{Group, User}
 import org.kolokolov.slick.repo.UserRepo
 import org.scalatest.{AsyncFunSuite, BeforeAndAfterEach, Matchers}
 import slick.jdbc.H2Profile
@@ -27,19 +28,19 @@ class UserRepoTest extends AsyncFunSuite
 
   test("getUserById(1) should return User(Bob Marley, 1)") {
     userRepo.getById(1).map {
-      result => result shouldEqual Some(userRepo.User("Bob Marley",1))
+      result => result shouldEqual Some(User("Bob Marley",1))
     }
   }
 
   test("getUsersByGroupId(2) should return Seq((User(Tom Waits, 3), Group(Admin, 2)))") {
     userRepo.getUsersByGroupId(2).map {
-      result => result shouldEqual Seq((userRepo.User("Tom Waits",3), userRepo.Group("Admin", 2)))
+      result => result shouldEqual Seq((User("Tom Waits",3), Group("Admin", 2)))
     }
   }
 
   test("getAllUsers should return Seq(User(Bob Marley,1), User(Ron Perlman, 2), User(Tom Waits, 3))") {
     userRepo.getAll.map {
-      result => result shouldEqual Seq(userRepo.User("Bob Marley", 1), userRepo.User("Ron Perlman", 2), userRepo.User("Tom Waits", 3))
+      result => result shouldEqual Seq(User("Bob Marley", 1), User("Ron Perlman", 2), User("Tom Waits", 3))
     }
   }
 
@@ -61,15 +62,15 @@ class UserRepoTest extends AsyncFunSuite
       addRes => {
         addRes shouldEqual 1
         userRepo.getUsersByGroupId(2).map {
-          result => result shouldEqual Seq((userRepo.User("Tom Waits", 3), userRepo.Group("Admin", 2)),
-            (userRepo.User("Bob Marley", 1), userRepo.Group("Admin", 2)))
+          result => result shouldEqual Seq((User("Tom Waits", 3), Group("Admin", 2)),
+            (User("Bob Marley", 1), Group("Admin", 2)))
         }
       }
     }
   }
 
   test("getAllUsers.length should return 4") {
-    userRepo.save(userRepo.User("Johnny Cash")).flatMap(
+    userRepo.save(User("Johnny Cash")).flatMap(
       addRes => {
         addRes shouldEqual 1
         userRepo.getAll.map {

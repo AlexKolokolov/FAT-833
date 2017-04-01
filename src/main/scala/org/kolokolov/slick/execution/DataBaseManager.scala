@@ -28,6 +28,8 @@ class DataBaseManager(override val profile: JdbcProfile) extends UserGroupModule
       groupTable.schema.drop,
       userTable.schema.drop
     )
-    db.run(dropTables)
+    try {
+      db.run(dropTables)
+    } finally db.close
   }
 }
