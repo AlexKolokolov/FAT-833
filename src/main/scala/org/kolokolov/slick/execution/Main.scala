@@ -37,14 +37,14 @@ object Main extends App{
 //  }
 
   for {
-    setupResult <- dataBaseManager.setupDB
+    _ <- dataBaseManager.setupDB
     addResult <- userRepo.save(User("Bob Marley"))
     getResult <- userRepo.getAll
-    cleanResult <- dataBaseManager.cleanDB
+    _ <- dataBaseManager.cleanDB
   } yield {
     println("Users added: " + addResult)
-    println("In database: " + getResult)
-    println("Database cleaned!")
+    println("Database content: " + getResult)
+    println("Database is cleaned!")
     done = true
   }
 

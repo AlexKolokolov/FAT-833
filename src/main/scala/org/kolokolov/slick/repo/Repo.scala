@@ -11,9 +11,9 @@ abstract class Repo[T] extends UserGroupModule {
 
   import profile.api._
 
-  def dataTable: TableQuery[Table[T]]
+  protected val dataTable: TableQuery[Table[T]]
 
-  val db: Database = Database.forConfig("db.config")
+  protected val db: Database = Database.forConfig("db.config")
 
   def save(data: T): Future[Int] = {
     db.run(dataTable += data)
@@ -25,7 +25,7 @@ abstract class Repo[T] extends UserGroupModule {
   }
 
   def getById(id: Int): Future[Option[T]] = {
-    val byId = dataTable.filter{
+    val byId = dataTable.filter {
       case data: Identifiable => data.id === id
     }.result.headOption
     db.run(byId)

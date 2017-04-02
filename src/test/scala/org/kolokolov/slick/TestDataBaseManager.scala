@@ -22,7 +22,7 @@ class TestDataBaseManager(override val profile: JdbcProfile) extends UserGroupMo
       groupTable ++= Seq(Group("User"), Group("Admin")),
       userTable ++= Seq(User("Bob Marley"), User("Ron Perlman"), User("Tom Waits")),
       userGroupTable ++= Seq(UserGroup(1,1), UserGroup(2,1), UserGroup(3,1), UserGroup(3,2))
-    )
+    ).transactionally
     db.run(setup)
   }
 
@@ -31,7 +31,7 @@ class TestDataBaseManager(override val profile: JdbcProfile) extends UserGroupMo
       userGroupTable.schema.drop,
       groupTable.schema.drop,
       userTable.schema.drop
-    )
+    ).transactionally
     db.run(dropTables)
   }
 }

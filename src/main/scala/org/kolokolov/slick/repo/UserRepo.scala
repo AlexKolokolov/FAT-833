@@ -12,9 +12,7 @@ class UserRepo(override val profile: JdbcProfile) extends Repo[User] {
 
   import profile.api._
 
-  override def dataTable: TableQuery[Table[User]] = {
-    userTable.asInstanceOf[TableQuery[Table[User]]]
-  }
+  override protected val dataTable: TableQuery[Table[User]] = userTable.asInstanceOf[TableQuery[Table[User]]]
 
   def addUserToGroup(userId: Int, groupId: Int): Future[Int] = {
     db.run(userGroupTable += UserGroup(userId,groupId))
@@ -33,5 +31,4 @@ class UserRepo(override val profile: JdbcProfile) extends Repo[User] {
     }.result
     db.run(usersByGroupId)
   }
-
 }

@@ -18,7 +18,7 @@ class DataBaseManager(override val profile: JdbcProfile) extends UserGroupModule
       groupTable.schema.create,
       userTable.schema.create,
       userGroupTable.schema.create
-    )
+    ).transactionally
     db.run(setup)
   }
 
@@ -27,7 +27,7 @@ class DataBaseManager(override val profile: JdbcProfile) extends UserGroupModule
       userGroupTable.schema.drop,
       groupTable.schema.drop,
       userTable.schema.drop
-    )
+    ).transactionally
     try {
       db.run(dropTables)
     } finally db.close

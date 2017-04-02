@@ -12,9 +12,7 @@ class GroupRepo(override val profile: JdbcProfile) extends Repo[Group] {
 
   import profile.api._
 
-  override def dataTable: TableQuery[Table[Group]] = {
-    groupTable.asInstanceOf[TableQuery[Table[Group]]]
-  }
+  override protected val dataTable: TableQuery[Table[Group]] = groupTable.asInstanceOf[TableQuery[Table[Group]]]
 
   def getGroupsByUserId(userId: Int): Future[Seq[(Group, User)]] = {
     val groupsByUserId = {
