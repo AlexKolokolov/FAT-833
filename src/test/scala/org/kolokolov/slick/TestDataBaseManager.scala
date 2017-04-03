@@ -1,6 +1,7 @@
 package org.kolokolov.slick
 
-import org.kolokolov.slick.domain._
+import org.kolokolov.slick.crud.UserGroupCRUDModule
+import org.kolokolov.slick.model.{Group, User, UserGroup}
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.Future
@@ -8,7 +9,7 @@ import scala.concurrent.Future
 /**
   * Created by Alexey Kolokolov on 29.03.2017.
   */
-class TestDataBaseManager(override val profile: JdbcProfile) extends UserGroupModule {
+class TestDataBaseManager(override val profile: JdbcProfile) extends UserGroupCRUDModule {
 
   import profile.api._
 

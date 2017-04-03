@@ -1,7 +1,7 @@
 package org.kolokolov.slick
 
-import org.kolokolov.slick.domain.{Group, User}
-import org.kolokolov.slick.repo.GroupRepo
+import org.kolokolov.slick.crud.GroupRepo
+import org.kolokolov.slick.model.{Group, User}
 import org.scalatest.{AsyncFunSuite, BeforeAndAfterEach, Matchers}
 import slick.jdbc.H2Profile
 
@@ -27,7 +27,7 @@ class GroupRepoTest extends AsyncFunSuite
   }
 
   test("getGroupById(2) should return Group(Admin, 2)") {
-    groupRepo.getById(2).map {
+    groupRepo.getGroupById(2).map {
       result => result shouldEqual Some(Group("Admin",2))
     }
   }
@@ -39,16 +39,16 @@ class GroupRepoTest extends AsyncFunSuite
   }
 
   test("getAllGroups should return Seq(Group(User,1), Group(Admin, 2))") {
-    groupRepo.getAll.map {
+    groupRepo.getAllGroups.map {
       result => result shouldEqual Seq(Group("User",1), Group("Admin",2))
     }
   }
 
   test("getGroupById(1) should return None after deleteGroup(1)") {
-    groupRepo.deleteById(1).flatMap {
+    groupRepo.deleteGroup(1).flatMap {
       delRes => {
         delRes shouldEqual 1
-        groupRepo.getById(1).map {
+        groupRepo.getGroupById(1).map {
           result => result shouldEqual None
         }
       }
@@ -56,10 +56,10 @@ class GroupRepoTest extends AsyncFunSuite
   }
 
   test("getAllGroups.length should return 3") {
-    groupRepo.save(Group("Developer")).flatMap(
+    groupRepo.saveGroup(Group("Developer")).flatMap(
       addRes => {
         addRes shouldEqual 1
-        groupRepo.getAll.map {
+        groupRepo.getAllGroups.map {
           result => result.length shouldEqual 3
         }
       }

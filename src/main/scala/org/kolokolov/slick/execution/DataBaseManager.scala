@@ -1,13 +1,14 @@
 package org.kolokolov.slick.execution
 
-import org.kolokolov.slick.domain._
+import org.kolokolov.slick.crud.UserGroupCRUDModule
 import slick.jdbc.JdbcProfile
+
 import scala.concurrent.Future
 
 /**
   * Created by Alexey Kolokolov on 29.03.2017.
   */
-class DataBaseManager(override val profile: JdbcProfile) extends UserGroupModule {
+class DataBaseManager(override val profile: JdbcProfile) extends UserGroupCRUDModule {
 
   import profile.api._
 

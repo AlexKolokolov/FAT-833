@@ -1,7 +1,7 @@
 package org.kolokolov.slick
 
-import org.kolokolov.slick.domain.{Group, User}
-import org.kolokolov.slick.repo.UserRepo
+import org.kolokolov.slick.crud.UserRepo
+import org.kolokolov.slick.model.{Group, User}
 import org.scalatest.{AsyncFunSuite, BeforeAndAfterEach, Matchers}
 import slick.jdbc.H2Profile
 
@@ -27,7 +27,7 @@ class UserRepoTest extends AsyncFunSuite
   }
 
   test("getUserById(1) should return User(Bob Marley, 1)") {
-    userRepo.getById(1).map {
+    userRepo.getUserById(1).map {
       result => result shouldEqual Some(User("Bob Marley",1))
     }
   }
@@ -39,16 +39,16 @@ class UserRepoTest extends AsyncFunSuite
   }
 
   test("getAllUsers should return Seq(User(Bob Marley,1), User(Ron Perlman, 2), User(Tom Waits, 3))") {
-    userRepo.getAll.map {
+    userRepo.getAllUsers.map {
       result => result shouldEqual Seq(User("Bob Marley", 1), User("Ron Perlman", 2), User("Tom Waits", 3))
     }
   }
 
   test("getUserById(1) should return None after deleteUser(1)") {
-    userRepo.deleteById(1).flatMap {
+    userRepo.deleteUser(1).flatMap {
       delRes => {
         delRes shouldEqual 1
-        userRepo.getById(1).map {
+        userRepo.getUserById(1).map {
           result => result shouldEqual None
         }
       }
@@ -70,10 +70,10 @@ class UserRepoTest extends AsyncFunSuite
   }
 
   test("getAllUsers.length should return 4") {
-    userRepo.save(User("Johnny Cash")).flatMap(
+    userRepo.saveUser(User("Johnny Cash")).flatMap(
       addRes => {
         addRes shouldEqual 1
-        userRepo.getAll.map {
+        userRepo.getAllUsers.map {
           result => result.length shouldEqual 4
         }
       }

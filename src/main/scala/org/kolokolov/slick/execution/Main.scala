@@ -1,8 +1,9 @@
 package org.kolokolov.slick.execution
 
-import org.kolokolov.slick.domain.User
-import org.kolokolov.slick.repo.UserRepo
+import org.kolokolov.slick.crud.UserRepo
+import org.kolokolov.slick.model.User
 import slick.jdbc.PostgresProfile
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
@@ -16,15 +17,15 @@ object Main extends App{
   var done = false
 
 //  dataBaseManager.setupDB.onComplete {
-//    setupResult => {
-//      userRepo.save(User("Bob Marley")).flatMap {
+//    _ => {
+//      userRepo.saveUser(User("Bob Marley")).flatMap {
 //        addResult => {
 //          println("Users added: " + addResult)
-//          userRepo.getAll.flatMap {
+//          userRepo.getAllUsers.flatMap {
 //            getResult => {
 //              println("In database: " + getResult)
 //              dataBaseManager.cleanDB.map {
-//                cleanResult => {
+//                _ => {
 //                  println("Database cleaned!")
 //                  done = true
 //                }
@@ -38,8 +39,8 @@ object Main extends App{
 
   for {
     _ <- dataBaseManager.setupDB
-    addResult <- userRepo.save(User("Bob Marley"))
-    getResult <- userRepo.getAll
+    addResult <- userRepo.saveUser(User("Bob Marley"))
+    getResult <- userRepo.getAllUsers
     _ <- dataBaseManager.cleanDB
   } yield {
     println("Users added: " + addResult)
