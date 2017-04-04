@@ -1,6 +1,5 @@
-package org.kolokolov.slick
+package org.kolokolov.slick.DBprofiles
 
-import org.kolokolov.slick.crud.DatabaseProfile
 import slick.jdbc.{H2Profile, JdbcProfile}
 
 /**

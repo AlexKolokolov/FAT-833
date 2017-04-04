@@ -1,6 +1,8 @@
 package org.kolokolov.slick.crud
 
+import org.kolokolov.slick.DBprofiles.DatabaseProfile
 import org.kolokolov.slick.model.EntityHasId
+
 import scala.concurrent.Future
 
 /**

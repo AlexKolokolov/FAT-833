@@ -1,6 +1,7 @@
 package org.kolokolov.slick.service
 
-import org.kolokolov.slick.crud.{DatabaseProfile, UserCRUDModule}
+import org.kolokolov.slick.DBprofiles.DatabaseProfile
+import org.kolokolov.slick.crud.UserCRUDModule
 import org.kolokolov.slick.model.User
 
 import scala.concurrent.Future

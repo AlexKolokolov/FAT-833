@@ -1,6 +1,7 @@
 package org.kolokolov.slick.service
 
-import org.kolokolov.slick.crud.{DatabaseProfile, GroupCRUDModule}
+import org.kolokolov.slick.DBprofiles.DatabaseProfile
+import org.kolokolov.slick.crud.GroupCRUDModule
 import org.kolokolov.slick.model.Group
 import slick.jdbc.JdbcProfile
 

@@ -1,5 +1,6 @@
 package org.kolokolov.slick
 
+import org.kolokolov.slick.DBprofiles.H2Database
 import org.kolokolov.slick.model.User
 import org.kolokolov.slick.service.UserService
 import org.scalatest.{AsyncFunSuite, BeforeAndAfterEach, Matchers}

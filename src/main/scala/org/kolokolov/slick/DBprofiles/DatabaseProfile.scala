@@ -1,4 +1,4 @@
-package org.kolokolov.slick.crud
+package org.kolokolov.slick.DBprofiles
 
 import slick.jdbc.JdbcProfile
 
