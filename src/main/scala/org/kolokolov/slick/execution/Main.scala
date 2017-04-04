@@ -1,6 +1,6 @@
 package org.kolokolov.slick.execution
 
-import org.kolokolov.slick.crud.UserCRUDPostgres
+import org.kolokolov.slick.crud.PostgresDatabase
 import org.kolokolov.slick.model.User
 import org.kolokolov.slick.service.UserService
 import slick.jdbc.PostgresProfile
@@ -12,7 +12,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
   */
 object Main extends App{
 
-  val userService = new UserService with UserCRUDPostgres
+  val userService = new UserService with PostgresDatabase
   val dataBaseManager = new DataBaseManager(PostgresProfile)
 
   var done = false

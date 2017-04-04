@@ -1,13 +1,14 @@
 package org.kolokolov.slick.crud
 
 import org.kolokolov.slick.model.EntityHasId
-
 import scala.concurrent.Future
 
 /**
   * Created by Alexey Kolokolov on 03.04.2017.
   */
-trait AbstractCRUDModule extends DatabaseProfile {
+trait AbstractCRUDModule {
+
+  self: DatabaseProfile =>
 
   import profile.api._
 

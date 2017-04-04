@@ -1,13 +1,13 @@
 package org.kolokolov.slick.crud
 
-import org.kolokolov.slick.model.{Group, User}
-
-import scala.concurrent.Future
+import org.kolokolov.slick.model.Group
 
 /**
-  * Created by andersen on 04.04.2017.
+  * Created by Alexey Kolokolov on 04.04.2017.
   */
 trait GroupCRUDModule extends AbstractCRUDModule {
+
+  self: DatabaseProfile =>
 
   import profile.api._
 
@@ -17,9 +17,7 @@ trait GroupCRUDModule extends AbstractCRUDModule {
     def * = (name, id) <> (Group.tupled, Group.unapply)
   }
 
-  protected lazy val groupTable = TableQuery[GroupTable]
-
-  class GroupCRUD extends AbstractCRUD[Group, GroupTable] {
-    override protected lazy val dataTable: TableQuery[GroupTable] = groupTable
+  object GroupCRUD extends AbstractCRUD[Group, GroupTable] {
+    override lazy val dataTable: TableQuery[GroupTable] = TableQuery[GroupTable]
   }
 }

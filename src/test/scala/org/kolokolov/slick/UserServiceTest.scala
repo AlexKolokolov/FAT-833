@@ -1,6 +1,5 @@
 package org.kolokolov.slick
 
-import org.kolokolov.slick.crud.UserCRUDH2
 import org.kolokolov.slick.model.User
 import org.kolokolov.slick.service.UserService
 import org.scalatest.{AsyncFunSuite, BeforeAndAfterEach, Matchers}
@@ -16,7 +15,7 @@ class UserServiceTest extends AsyncFunSuite
   with Matchers
   with BeforeAndAfterEach {
 
-  private val userService = new UserService with UserCRUDH2
+  private val userService = new UserService with H2Database
 
   private val testDataBaseManager = new TestDataBaseManager(H2Profile)
 

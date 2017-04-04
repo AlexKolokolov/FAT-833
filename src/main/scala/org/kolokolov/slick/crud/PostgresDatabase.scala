@@ -5,6 +5,6 @@ import slick.jdbc.{JdbcProfile, PostgresProfile}
 /**
   * Created by andersen on 04.04.2017.
   */
-trait UserCRUDPostgres extends UserCRUDModule {
+trait PostgresDatabase extends DatabaseProfile {
   override protected val profile: JdbcProfile = PostgresProfile
 }

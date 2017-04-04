@@ -1,6 +1,5 @@
 package org.kolokolov.slick
 
-import org.kolokolov.slick.crud.GroupCRUDModule
 import org.kolokolov.slick.model.Group
 import org.kolokolov.slick.service.GroupService
 import org.scalatest.{AsyncFunSuite, BeforeAndAfterEach, Matchers}
@@ -16,7 +15,7 @@ class GroupServiceTest extends AsyncFunSuite
   with Matchers
   with BeforeAndAfterEach {
 
-  private val groupService = new GroupService(H2Profile) with GroupCRUDModule
+  private val groupService = new GroupService(H2Profile)
 
   private val testDataBaseManager = new TestDataBaseManager(H2Profile)
 
