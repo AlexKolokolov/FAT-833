@@ -9,7 +9,12 @@ import scala.concurrent.Future
 /**
   * Created by Alexey Kolokolov on 29.03.2017.
   */
-class DataBaseManager(override val profile: JdbcProfile) extends UserGroupCRUDModule with UserCRUDModule with GroupCRUDModule with DatabaseProfile {
+class DataBaseManager
+  extends UserGroupCRUDModule
+  with UserCRUDModule
+  with GroupCRUDModule {
+
+  this: DatabaseProfile =>
 
   import profile.api._
 
