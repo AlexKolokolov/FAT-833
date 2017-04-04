@@ -9,9 +9,9 @@ import scala.concurrent.Future
   */
 trait AbstractCRUDModule extends DatabaseProfile {
 
-  abstract class AbstractCRUD[E <: EntityHasId, T <: TableHasId[E]] {
+  import profile.api._
 
-    import profile.api._
+  abstract class AbstractCRUD[E <: EntityHasId, T <: TableHasId[E]] {
 
     protected val dataBase: Database = Database.forConfig("db.config")
 
