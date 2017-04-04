@@ -11,5 +11,5 @@ trait DatabaseProfile {
 
   import profile.api._
 
-  protected val dataBase: Database = Database.forConfig("db.config")
+  protected lazy val dataBase: Database = Database.forConfig("db.config")
 }
