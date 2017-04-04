@@ -11,9 +11,11 @@ trait AbstractCRUDModule extends DatabaseProfile {
 
   import profile.api._
 
-  abstract class AbstractCRUD[E <: EntityHasId, T <: TableHasId[E]] {
+  trait TableHasId[E <: EntityHasId] extends Table[E] {
+    def id: Rep[Int]
+  }
 
-    protected val dataBase: Database = Database.forConfig("db.config")
+  abstract class AbstractCRUD[E <: EntityHasId, T <: TableHasId[E]] {
 
     protected val dataTable: TableQuery[T]
 

@@ -1,6 +1,5 @@
 package org.kolokolov.slick.crud
 
-import org.kolokolov.slick.model.EntityHasId
 import slick.jdbc.JdbcProfile
 
 /**
@@ -12,7 +11,5 @@ trait DatabaseProfile {
 
   import profile.api._
 
-  trait TableHasId[E <: EntityHasId] extends Table[E] {
-    def id: Rep[Int]
-  }
+  protected val dataBase: Database = Database.forConfig("db.config")
 }

@@ -1,7 +1,8 @@
 package org.kolokolov.slick.execution
 
-import org.kolokolov.slick.crud.UserRepo
+import org.kolokolov.slick.crud.UserCRUDPostgres
 import org.kolokolov.slick.model.User
+import org.kolokolov.slick.service.UserService
 import slick.jdbc.PostgresProfile
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -11,17 +12,17 @@ import scala.concurrent.ExecutionContext.Implicits.global
   */
 object Main extends App{
 
-  val userRepo = new UserRepo(PostgresProfile)
+  val userService = new UserService with UserCRUDPostgres
   val dataBaseManager = new DataBaseManager(PostgresProfile)
 
   var done = false
 
 //  dataBaseManager.setupDB.onComplete {
 //    _ => {
-//      userRepo.saveUser(User("Bob Marley")).flatMap {
+//      userService.saveUser(User("Bob Marley")).flatMap {
 //        addResult => {
 //          println("Users added: " + addResult)
-//          userRepo.getAllUsers.flatMap {
+//          userService.getAllUsers.flatMap {
 //            getResult => {
 //              println("In database: " + getResult)
 //              dataBaseManager.cleanDB.map {
@@ -39,8 +40,8 @@ object Main extends App{
 
   for {
     _ <- dataBaseManager.setupDB
-    addResult <- userRepo.saveUser(User("Bob Marley"))
-    getResult <- userRepo.getAllUsers
+    addResult <- userService.saveUser(User("Bob Marley"))
+    getResult <- userService.getAllUsers
     _ <- dataBaseManager.cleanDB
   } yield {
     println("Users added: " + addResult)

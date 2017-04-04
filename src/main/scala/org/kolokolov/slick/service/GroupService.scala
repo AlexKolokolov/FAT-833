@@ -1,6 +1,7 @@
-package org.kolokolov.slick.crud
+package org.kolokolov.slick.service
 
-import org.kolokolov.slick.model.{Group, User}
+import org.kolokolov.slick.crud.GroupCRUDModule
+import org.kolokolov.slick.model.Group
 import slick.jdbc.JdbcProfile
 
 import scala.concurrent.Future
@@ -8,15 +9,15 @@ import scala.concurrent.Future
 /**
   * Created by Alexey Kolokolov on 03.04.2017.
   */
-class GroupRepo(override val profile: JdbcProfile) extends UserGroupCRUDModule {
+class GroupService(override protected val profile: JdbcProfile) {
+
+  self: GroupCRUDModule =>
 
   private val groupCRUD = new GroupCRUD
 
   def getAllGroups: Future[Seq[Group]] = groupCRUD.getAll
 
   def getGroupById(groupId: Int): Future[Option[Group]] = groupCRUD.getById(groupId)
-
-  def getGroupsByUserId(userId: Int): Future[Seq[(Group,User)]] = groupCRUD.getGroupsByUserId(userId)
 
   def saveGroup(group: Group): Future[Int] = groupCRUD.save(group)
 

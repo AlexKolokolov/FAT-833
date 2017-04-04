@@ -1,6 +1,6 @@
 package org.kolokolov.slick
 
-import org.kolokolov.slick.crud.UserGroupCRUDModule
+import org.kolokolov.slick.crud.{GroupCRUDModule, UserCRUDModule, UserGroupCRUDModule}
 import org.kolokolov.slick.model.{Group, User, UserGroup}
 import slick.jdbc.JdbcProfile
 
@@ -9,11 +9,9 @@ import scala.concurrent.Future
 /**
   * Created by Alexey Kolokolov on 29.03.2017.
   */
-class TestDataBaseManager(override val profile: JdbcProfile) extends UserGroupCRUDModule {
+class TestDataBaseManager(override val profile: JdbcProfile) extends UserGroupCRUDModule with UserCRUDModule with GroupCRUDModule {
 
   import profile.api._
-
-  private val db = Database.forConfig("db.config")
 
   def setupDB: Future[Unit] = {
     val setup = DBIO.seq(
@@ -24,7 +22,7 @@ class TestDataBaseManager(override val profile: JdbcProfile) extends UserGroupCR
       userTable ++= Seq(User("Bob Marley"), User("Ron Perlman"), User("Tom Waits")),
       userGroupTable ++= Seq(UserGroup(1,1), UserGroup(2,1), UserGroup(3,1), UserGroup(3,2))
     ).transactionally
-    db.run(setup)
+    dataBase.run(setup)
   }
 
   def cleanDB: Future[Unit] = {
@@ -33,6 +31,6 @@ class TestDataBaseManager(override val profile: JdbcProfile) extends UserGroupCR
       groupTable.schema.drop,
       userTable.schema.drop
     ).transactionally
-    db.run(dropTables)
+    dataBase.run(dropTables)
   }
 }
