@@ -3,7 +3,7 @@ val scalatraVersion = "2.5.0"
 lazy val root = (project in file(".")).settings(
 	name := "fat-833",
 	version := "1.2-SNAPSHOT",
-	scalaVersion := "2.12.1",
+	scalaVersion := "2.11.8",
 	parallelExecution in Test := false,
 	fork in run := true,
 	libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test",
@@ -23,5 +23,8 @@ lazy val root = (project in file(".")).settings(
 		"org.scalatra" %% "scalatra-json" % scalatraVersion,
 		"org.scalatra" %% "scalatra-specs2" % scalatraVersion % "test",
 		"org.json4s" %% "json4s-jackson" % "3.5.1",
-		"javax.servlet" % "javax.servlet-api" % "3.1.0" % "provided")
+		"javax.servlet" % "javax.servlet-api" % "3.1.0" % "provided"),
+	libraryDependencies ++= Seq(
+		"com.typesafe.akka" %% "akka-actor" % "2.4.16",
+		"net.databinder.dispatch" %% "dispatch-core" % "0.12.0")
 ).settings(jetty(): _*)

@@ -1,20 +1,26 @@
 package org.kolokolov.scalatra.controller
 
+import akka.actor.ActorSystem
+import dispatch.Future
 import org.json4s.{DefaultFormats, Formats}
 import org.kolokolov.slick.DBprofiles.PostgresDatabase
-import org.kolokolov.slick.model.Group
+import org.kolokolov.slick.model.{Group, User}
 import org.kolokolov.slick.service.{GroupService, UserGroupService}
-import org.scalatra.ScalatraServlet
+import org.scalatra.{AsyncResult, FutureSupport, ScalatraServlet}
 import org.scalatra.json.JacksonJsonSupport
 
-import scala.concurrent.Await
-import scala.concurrent.duration.Duration
+import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Success, Try}
 
 /**
   * Created by Alexey Kolokolov on 05.04.2017.
   */
-class GroupController extends ScalatraServlet with JacksonJsonSupport {
+class GroupController(system: ActorSystem)
+  extends ScalatraServlet
+    with JacksonJsonSupport
+    with FutureSupport {
+
+  override protected implicit def executor: ExecutionContext = system.dispatcher
 
   override protected implicit def jsonFormats: Formats = DefaultFormats
 
@@ -27,7 +33,9 @@ class GroupController extends ScalatraServlet with JacksonJsonSupport {
 
   // shows all groups
   get("/") {
-    Await.result(groupService.getAllGroups, Duration(2, "sec"))
+    new AsyncResult {
+      override val is: Future[Seq[Group]] = groupService.getAllGroups
+    }
   }
 
   // shows group with given ID
@@ -35,7 +43,9 @@ class GroupController extends ScalatraServlet with JacksonJsonSupport {
     Try {
       params("id").toInt
     } match {
-      case Success(id) => Await.result(groupService.getGroupById(id), Duration(2, "sec"))
+      case Success(id) => new AsyncResult {
+        override val is: Future[Option[Group]] = groupService.getGroupById(id)
+      }
       case Failure(ex) => pass
     }
   }
@@ -45,7 +55,9 @@ class GroupController extends ScalatraServlet with JacksonJsonSupport {
     Try {
       params("uid").toInt
     } match {
-      case Success(userId) => Await.result(userGroupService.getGroupsByUserId(userId), Duration(2, "sec"))
+      case Success(userId) => new AsyncResult {
+        override val is: Future[Seq[(Group, User)]] = userGroupService.getGroupsByUserId(userId)
+      }
       case Failure(ex) => pass
     }
   }
