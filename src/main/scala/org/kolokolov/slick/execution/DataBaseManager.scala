@@ -1,35 +1,39 @@
 package org.kolokolov.slick.execution
 
-import org.kolokolov.slick.domain._
-import slick.jdbc.JdbcProfile
+import org.kolokolov.slick.DBprofiles.DatabaseProfile
+import org.kolokolov.slick.crud.{GroupCRUDModule, UserCRUDModule, UserGroupCRUDModule}
+
 import scala.concurrent.Future
 
 /**
   * Created by Alexey Kolokolov on 29.03.2017.
   */
-class DataBaseManager(override val profile: JdbcProfile) extends UserGroupModule {
+class DataBaseManager
+  extends UserGroupCRUDModule
+  with UserCRUDModule
+  with GroupCRUDModule {
+
+  this: DatabaseProfile =>
 
   import profile.api._
 
-  private val db = Database.forConfig("db.config")
-
   def setupDB: Future[Unit] = {
     val setup = DBIO.seq(
-      groupTable.schema.create,
-      userTable.schema.create,
-      userGroupTable.schema.create
+      UserCRUD.dataTable.schema.create,
+      GroupCRUD.dataTable.schema.create,
+      UserGroupCRUD.dataTable.schema.create
     ).transactionally
-    db.run(setup)
+    dataBase.run(setup)
   }
 
   def cleanDB: Future[Unit] = {
     val dropTables = DBIO.seq(
-      userGroupTable.schema.drop,
-      groupTable.schema.drop,
-      userTable.schema.drop
+      UserGroupCRUD.dataTable.schema.drop,
+      GroupCRUD.dataTable.schema.drop,
+      UserCRUD.dataTable.schema.drop
     ).transactionally
     try {
-      db.run(dropTables)
-    } finally db.close
+      dataBase.run(dropTables)
+    } finally dataBase.close
   }
 }

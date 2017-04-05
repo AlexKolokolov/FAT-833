@@ -1,8 +1,9 @@
 package org.kolokolov.slick.execution
 
-import org.kolokolov.slick.domain.User
-import org.kolokolov.slick.repo.UserRepo
-import slick.jdbc.PostgresProfile
+import org.kolokolov.slick.DBprofiles.PostgresDatabase
+import org.kolokolov.slick.model.User
+import org.kolokolov.slick.service.UserService
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
@@ -10,21 +11,21 @@ import scala.concurrent.ExecutionContext.Implicits.global
   */
 object Main extends App{
 
-  val userRepo = new UserRepo(PostgresProfile)
-  val dataBaseManager = new DataBaseManager(PostgresProfile)
+  val userService = new UserService with PostgresDatabase
+  val dataBaseManager = new DataBaseManager with PostgresDatabase
 
   var done = false
 
 //  dataBaseManager.setupDB.onComplete {
-//    setupResult => {
-//      userRepo.save(User("Bob Marley")).flatMap {
+//    _ => {
+//      userService.saveUser(User("Bob Marley")).flatMap {
 //        addResult => {
 //          println("Users added: " + addResult)
-//          userRepo.getAll.flatMap {
+//          userService.getAllUsers.flatMap {
 //            getResult => {
 //              println("In database: " + getResult)
 //              dataBaseManager.cleanDB.map {
-//                cleanResult => {
+//                _ => {
 //                  println("Database cleaned!")
 //                  done = true
 //                }
@@ -38,8 +39,8 @@ object Main extends App{
 
   for {
     _ <- dataBaseManager.setupDB
-    addResult <- userRepo.save(User("Bob Marley"))
-    getResult <- userRepo.getAll
+    addResult <- userService.saveUser(User("Bob Marley"))
+    getResult <- userService.getAllUsers
     _ <- dataBaseManager.cleanDB
   } yield {
     println("Users added: " + addResult)
