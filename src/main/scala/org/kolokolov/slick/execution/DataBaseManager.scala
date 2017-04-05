@@ -2,7 +2,6 @@ package org.kolokolov.slick.execution
 
 import org.kolokolov.slick.DBprofiles.DatabaseProfile
 import org.kolokolov.slick.crud.{GroupCRUDModule, UserCRUDModule, UserGroupCRUDModule}
-import slick.jdbc.JdbcProfile
 
 import scala.concurrent.Future
 
