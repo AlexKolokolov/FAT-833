@@ -3,15 +3,14 @@ package org.kolokolov.slick.service
 import org.kolokolov.slick.DBprofiles.DatabaseProfile
 import org.kolokolov.slick.crud.GroupCRUDModule
 import org.kolokolov.slick.model.Group
+import slick.jdbc.JdbcProfile
 
 import scala.concurrent.Future
 
 /**
   * Created by Alexey Kolokolov on 03.04.2017.
   */
-class GroupService extends GroupCRUDModule {
-
-  this: DatabaseProfile =>
+class GroupService(override protected val profile: JdbcProfile) extends GroupCRUDModule with DatabaseProfile {
 
   def getAllGroups: Future[Seq[Group]] = GroupCRUD.getAll
 

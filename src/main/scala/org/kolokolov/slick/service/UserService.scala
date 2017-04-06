@@ -3,15 +3,14 @@ package org.kolokolov.slick.service
 import org.kolokolov.slick.DBprofiles.DatabaseProfile
 import org.kolokolov.slick.crud.UserCRUDModule
 import org.kolokolov.slick.model.User
+import slick.jdbc.JdbcProfile
 
 import scala.concurrent.Future
 
 /**
   * Created by Alexey Kolokolov on 03.04.2017.
   */
-class UserService extends UserCRUDModule {
-
-  this: DatabaseProfile =>
+class UserService(override protected val profile: JdbcProfile) extends UserCRUDModule with DatabaseProfile {
 
   def getAllUsers: Future[Seq[User]] = UserCRUD.getAll
 
