@@ -3,7 +3,7 @@ package org.kolokolov.scalatra.controller
 import akka.actor.ActorSystem
 import dispatch.Future
 import org.json4s.{DefaultFormats, Formats}
-import org.kolokolov.slick.DBprofiles.PostgresDatabase
+import org.kolokolov.slick.DBprofiles.{DatabaseProfile, PostgresDatabase}
 import org.kolokolov.slick.model.{Group, User}
 import org.kolokolov.slick.service.{GroupService, UserGroupService}
 import org.scalatra.{AsyncResult, FutureSupport, ScalatraServlet}
@@ -20,12 +20,14 @@ class GroupController(system: ActorSystem)
     with JacksonJsonSupport
     with FutureSupport {
 
+  this: DatabaseProfile =>
+
   override protected implicit def executor: ExecutionContext = system.dispatcher
 
   override protected implicit def jsonFormats: Formats = DefaultFormats
 
-  val groupService = new GroupService with PostgresDatabase
-  val userGroupService = new UserGroupService with PostgresDatabase
+  private lazy val groupService = new GroupService(profile)
+  private lazy val userGroupService = new UserGroupService(profile)
 
   before() {
     contentType = formats("json")
@@ -64,8 +66,12 @@ class GroupController(system: ActorSystem)
 
   // adds new group
   post("/") {
-    val group = parsedBody.extract[Group]
-    groupService.saveGroup(group)
+    Try {
+      parsedBody.extract[Group]
+    } match {
+      case Success(group) => groupService.saveGroup(group)
+      case Failure(ex) => pass
+    }
   }
 
   // removes group with given ID

@@ -3,7 +3,7 @@ package org.kolokolov.scalatra.controller
 import akka.actor.ActorSystem
 import dispatch.Future
 import org.json4s.{DefaultFormats, Formats}
-import org.kolokolov.slick.DBprofiles.PostgresDatabase
+import org.kolokolov.slick.DBprofiles.{DatabaseProfile, PostgresDatabase}
 import org.kolokolov.slick.model.{Group, User}
 import org.kolokolov.slick.service.{UserGroupService, UserService}
 import org.scalatra.{AsyncResult, FutureSupport, ScalatraServlet}
@@ -20,12 +20,14 @@ class UserController(system: ActorSystem)
     with JacksonJsonSupport
     with FutureSupport {
 
+  this: DatabaseProfile =>
+
   override protected implicit def executor: ExecutionContext = system.dispatcher
 
   override protected implicit def jsonFormats: Formats = DefaultFormats
 
-  val userService = new UserService with PostgresDatabase
-  val userGroupService = new UserGroupService with PostgresDatabase
+  private lazy val userService = new UserService(profile)
+  private lazy val userGroupService = new UserGroupService(profile)
 
   before() {
     contentType = formats("json")
@@ -33,7 +35,7 @@ class UserController(system: ActorSystem)
 
   // shows all users
   get("/") {
-    new AsyncResult() {
+    new AsyncResult {
       override val is: Future[Seq[User]] = userService.getAllUsers
     }
   }
@@ -43,7 +45,7 @@ class UserController(system: ActorSystem)
     Try {
       params("id").toInt
     } match {
-      case Success(id) => new AsyncResult() {
+      case Success(id) => new AsyncResult {
         override val is: Future[Option[User]] = userService.getUserById(id)
       }
       case Failure(ex) => pass
@@ -55,7 +57,7 @@ class UserController(system: ActorSystem)
     Try {
       params("gid").toInt
     } match {
-      case Success(groupId) => new AsyncResult() {
+      case Success(groupId) => new AsyncResult {
         override val is: Future[Seq[(User, Group)]] = userGroupService.getUsersByGroupId(groupId)
       }
       case Failure(ex) => pass
@@ -64,8 +66,12 @@ class UserController(system: ActorSystem)
 
   // adds new user
   post("/") {
-    val user = parsedBody.extract[User]
-    userService.saveUser(user)
+    Try {
+      parsedBody.extract[User]
+    } match {
+      case Success(user) => userService.saveUser(user)
+      case Failure(ex) => pass
+    }
   }
 
   // adds user with given ID to group with given ID

@@ -4,6 +4,7 @@ import org.kolokolov.slick.DBprofiles.H2Database
 import org.kolokolov.slick.model.Group
 import org.kolokolov.slick.service.GroupService
 import org.scalatest.{AsyncFunSuite, BeforeAndAfterEach, Matchers}
+import slick.jdbc.H2Profile
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
@@ -15,7 +16,7 @@ class GroupServiceTest extends AsyncFunSuite
   with Matchers
   with BeforeAndAfterEach {
 
-  private val groupService = new GroupService with H2Database
+  private val groupService = new GroupService(H2Profile)
 
   private val testDataBaseManager = new TestDataBaseManager with H2Database
 

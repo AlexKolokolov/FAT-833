@@ -3,15 +3,18 @@ package org.kolokolov.slick.service
 import org.kolokolov.slick.DBprofiles.DatabaseProfile
 import org.kolokolov.slick.crud.{GroupCRUDModule, UserCRUDModule, UserGroupCRUDModule}
 import org.kolokolov.slick.model.{Group, User}
+import slick.jdbc.JdbcProfile
 
 import scala.concurrent.Future
 
 /**
   * Created by Alexey Kolokolov on 05.04.2017.
   */
-class UserGroupService extends UserGroupCRUDModule with UserCRUDModule with GroupCRUDModule  {
-
-  this: DatabaseProfile =>
+class UserGroupService(override protected val profile: JdbcProfile)
+  extends UserGroupCRUDModule
+    with UserCRUDModule
+    with GroupCRUDModule
+    with DatabaseProfile {
 
   def addUserToGroup(userId: Int, groupId: Int): Future[Int] = UserGroupCRUD.addUserToGroup(userId, groupId)
 

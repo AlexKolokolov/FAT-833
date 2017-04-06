@@ -4,6 +4,7 @@ import org.kolokolov.slick.DBprofiles.H2Database
 import org.kolokolov.slick.model.User
 import org.kolokolov.slick.service.UserService
 import org.scalatest.{AsyncFunSuite, BeforeAndAfterEach, Matchers}
+import slick.jdbc.H2Profile
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
@@ -15,7 +16,7 @@ class UserServiceTest extends AsyncFunSuite
   with Matchers
   with BeforeAndAfterEach {
 
-  private val userService = new UserService with H2Database
+  private val userService = new UserService(H2Profile)
 
   private val testDataBaseManager = new TestDataBaseManager with H2Database
 

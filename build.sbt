@@ -18,10 +18,9 @@ lazy val root = (project in file(".")).settings(
 	resolvers += "Scalaz Bintray Repo" at "https://dl.bintray.com/scalaz/releases",
 	scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature"),
 	libraryDependencies ++= Seq(
-		"org.scalatra" %% "scalatra-auth" % scalatraVersion,
 		"org.scalatra" %% "scalatra" % scalatraVersion,
 		"org.scalatra" %% "scalatra-json" % scalatraVersion,
-		"org.scalatra" %% "scalatra-specs2" % scalatraVersion % "test",
+		"org.scalatra" %% "scalatra-scalatest" % scalatraVersion % "test",
 		"org.json4s" %% "json4s-jackson" % "3.5.1",
 		"javax.servlet" % "javax.servlet-api" % "3.1.0" % "provided"),
 	libraryDependencies ++= Seq(
