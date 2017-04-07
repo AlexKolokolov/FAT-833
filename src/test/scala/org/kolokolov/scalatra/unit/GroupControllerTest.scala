@@ -8,7 +8,6 @@ import org.kolokolov.slick.service.GroupService
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{BeforeAndAfterEach, FunSuiteLike}
 import org.scalatra.test.scalatest.ScalatraSuite
-import org.slf4j.LoggerFactory
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

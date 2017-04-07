@@ -21,7 +21,7 @@ class UserControllerTest extends ScalatraSuite
   with FunSuiteLike
   with BeforeAndAfterEach {
 
-  private val logger = LoggerFactory.getLogger("Unit UserControllerTest logger")
+  private val logger = LoggerFactory.getLogger(this.getClass)
 
   val system = ActorSystem()
 
@@ -44,7 +44,7 @@ class UserControllerTest extends ScalatraSuite
     }
   }
 
-  ignore("GET /users/1 should return {name:Bob Marley,id:1}") {
+  test("GET /users/1 should return {name:Bob Marley,id:1}") {
     logger.debug("get /users/1 test is running")
     get("/users/1") {
       body should include (firstUser.name)

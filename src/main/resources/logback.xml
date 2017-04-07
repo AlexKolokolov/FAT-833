@@ -24,12 +24,12 @@
         </encoder>
     </appender>
 
+    <logger name="org.kolokolov" level="DEBUG">
+        <appender-ref ref="FILE" />
+    </logger>
+
     <root level="DEBUG">
         <appender-ref ref="STDOUT" />
         <!--<appender-ref ref="FILE" />-->
     </root>
-
-    <logger name="org.kolokolov" level="INFO">
-        <appender-ref ref="FILE" />
-    </logger>
 </configuration>

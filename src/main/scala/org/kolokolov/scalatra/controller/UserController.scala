@@ -23,7 +23,7 @@ class UserController(system: ActorSystem)
 
   this: DatabaseProfile =>
 
-  private val logger = LoggerFactory.getLogger("UserController logger")
+  private val logger = LoggerFactory.getLogger(this.getClass)
 
   override protected implicit def executor: ExecutionContext = system.dispatcher
 
@@ -38,7 +38,7 @@ class UserController(system: ActorSystem)
 
   // shows all users
   get("/") {
-    logger.debug("get / is running")
+    logger.debug("get /users is running")
     new AsyncResult {
       override val is: Future[Seq[User]] = userService.getAllUsers
       logger.debug("getAllUsers returned " + is)
@@ -47,7 +47,7 @@ class UserController(system: ActorSystem)
 
   // shows user with given ID
   get("/:id") {
-    logger.debug("get / is running")
+    logger.debug("get /users/1 is running")
     Try {
       params("id").toInt
     } match {
