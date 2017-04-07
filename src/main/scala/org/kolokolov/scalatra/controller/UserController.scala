@@ -54,7 +54,7 @@ class UserController(system: ActorSystem)
       case Success(id) => new AsyncResult {
         logger.debug("User ID has been obtained: " + id)
         override val is: Future[Option[User]] = userService.getUserById(id)
-
+        logger.debug("getUserById returned " + is)
       }
       case Failure(ex) => pass
     }
