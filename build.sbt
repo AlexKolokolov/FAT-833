@@ -23,6 +23,7 @@ lazy val root = (project in file(".")).settings(
 		"org.scalatra" %% "scalatra-scalatest" % scalatraVersion % "test",
 		"org.json4s" %% "json4s-jackson" % "3.5.1",
 		"javax.servlet" % "javax.servlet-api" % "3.1.0" % "provided"),
+	libraryDependencies += "org.scalamock" %% "scalamock-scalatest-support" % "3.5.0",
 	libraryDependencies ++= Seq(
 		"com.typesafe.akka" %% "akka-actor" % "2.4.16",
 		"net.databinder.dispatch" %% "dispatch-core" % "0.12.0")

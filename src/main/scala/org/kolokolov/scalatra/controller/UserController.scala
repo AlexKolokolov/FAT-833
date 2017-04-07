@@ -8,6 +8,7 @@ import org.kolokolov.slick.model.{Group, User}
 import org.kolokolov.slick.service.{UserGroupService, UserService}
 import org.scalatra.{AsyncResult, FutureSupport, ScalatraServlet}
 import org.scalatra.json.JacksonJsonSupport
+import org.slf4j.LoggerFactory
 
 import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Success, Try}
@@ -22,12 +23,14 @@ class UserController(system: ActorSystem)
 
   this: DatabaseProfile =>
 
+  private val logger = LoggerFactory.getLogger("UserController logger")
+
   override protected implicit def executor: ExecutionContext = system.dispatcher
 
   override protected implicit def jsonFormats: Formats = DefaultFormats
 
-  private lazy val userService = new UserService(profile)
-  private lazy val userGroupService = new UserGroupService(profile)
+  protected lazy val userService = new UserService(profile)
+  protected lazy val userGroupService = new UserGroupService(profile)
 
   before() {
     contentType = formats("json")
@@ -35,18 +38,23 @@ class UserController(system: ActorSystem)
 
   // shows all users
   get("/") {
+    logger.debug("get / is running")
     new AsyncResult {
       override val is: Future[Seq[User]] = userService.getAllUsers
+      logger.debug("getAllUsers returned " + is)
     }
   }
 
   // shows user with given ID
   get("/:id") {
+    logger.debug("get / is running")
     Try {
       params("id").toInt
     } match {
       case Success(id) => new AsyncResult {
+        logger.debug("User ID has been obtained: " + id)
         override val is: Future[Option[User]] = userService.getUserById(id)
+
       }
       case Failure(ex) => pass
     }

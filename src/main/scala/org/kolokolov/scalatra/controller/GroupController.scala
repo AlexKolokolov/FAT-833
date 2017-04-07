@@ -26,8 +26,8 @@ class GroupController(system: ActorSystem)
 
   override protected implicit def jsonFormats: Formats = DefaultFormats
 
-  private lazy val groupService = new GroupService(profile)
-  private lazy val userGroupService = new UserGroupService(profile)
+  protected lazy val groupService = new GroupService(profile)
+  protected lazy val userGroupService = new UserGroupService(profile)
 
   before() {
     contentType = formats("json")
