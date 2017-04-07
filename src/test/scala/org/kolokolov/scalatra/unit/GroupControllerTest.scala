@@ -39,7 +39,7 @@ class GroupControllerTest extends ScalatraSuite
     }
   }
 
-  test("GET /groups/1 should return {name:User,id:1}") {
+  ignore("GET /groups/1 should return {name:User,id:1}") {
     get("/groups/1") {
       body should include ("User")
     }
