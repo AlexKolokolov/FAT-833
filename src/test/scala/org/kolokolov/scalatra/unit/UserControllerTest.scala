@@ -44,7 +44,7 @@ class UserControllerTest extends ScalatraSuite
     }
   }
 
-  test("GET /users/1 should return {name:Bob Marley,id:1}") {
+  ignore("GET /users/1 should return {name:Bob Marley,id:1}") {
     logger.debug("get /users/1 test is running")
     get("/users/1") {
       body should include (firstUser.name)
