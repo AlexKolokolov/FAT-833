@@ -10,7 +10,6 @@ import org.kolokolov.slick.model.Group
 import org.kolokolov.slick.service.{GroupService, UserGroupService}
 import org.scalatra.{FutureSupport, ScalatraServlet}
 import org.scalatra.json.JacksonJsonSupport
-import slick.jdbc.JdbcProfile
 
 import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Success, Try}
@@ -29,8 +28,11 @@ class GroupController(system: ActorSystem)
   override protected implicit def executor: ExecutionContext = system.dispatcher
 
   override protected implicit def jsonFormats: Formats = DefaultFormats
-  
-  private lazy val groupActor = system.actorOf(Props(new GroupActor(profile)))
+
+  protected lazy val groupService = new GroupService(profile)
+  protected lazy val userGroupService = new UserGroupService(profile)
+
+  private lazy val groupActor = system.actorOf(Props(new GroupActor(groupService, userGroupService)))
 
   implicit val timeout = new Timeout(2 seconds)
 
@@ -90,10 +92,7 @@ case class GroupById(groupId: Int)
 case class GroupsByUserId(userId: Int)
 case class DeleteGroup(groupId: Int)
 
-class GroupActor(profile: JdbcProfile) extends Actor {
-
-  private lazy val groupService = new GroupService(profile)
-  private lazy val userGroupService = new UserGroupService(profile)
+class GroupActor(val groupService: GroupService, val userGroupService: UserGroupService) extends Actor {
 
   override def receive: Receive = {
     case AllGroups => sender ! groupService.getAllGroups
