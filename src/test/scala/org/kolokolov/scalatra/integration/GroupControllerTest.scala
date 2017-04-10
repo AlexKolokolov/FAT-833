@@ -1,4 +1,4 @@
-package org.kolokolov.scalatra
+package org.kolokolov.scalatra.integration
 
 import _root_.akka.actor.ActorSystem
 import org.kolokolov.scalatra.controller.GroupController
@@ -34,6 +34,18 @@ class GroupControllerTest extends ScalatraSuite
   test("GET /groups/1 should return {name:User,id:1}") {
     get("/groups/1") {
       body should include ("User")
+    }
+  }
+
+  test("GET /groups should return [{name:User,id:1},{name:Admin,id:2}]") {
+    get("/groups") {
+      body should include ("Admin")
+    }
+  }
+
+  test("GET /groups/user/1 should return [{name:User,id:1},{name:Bob Marley,id:1}]") {
+    get("/groups/user/1") {
+      body should include ("[{\"_1\":{\"name\":\"User\",\"id\":1},\"_2\":{\"name\":\"Bob Marley\",\"id\":1}}]")
     }
   }
 }
