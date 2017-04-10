@@ -93,7 +93,6 @@ case class GroupsByUserId(userId: Int)
 case class DeleteGroup(groupId: Int)
 
 class GroupActor(val groupService: GroupService, val userGroupService: UserGroupService) extends Actor {
-
   override def receive: Receive = {
     case AllGroups => sender ! groupService.getAllGroups
     case groupById: GroupById => sender ! groupService.getGroupById(groupById.groupId)

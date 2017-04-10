@@ -1,17 +1,20 @@
 package org.kolokolov.scalatra.controller
 
-import akka.actor.ActorSystem
-import dispatch.Future
+import akka.actor.{Actor, ActorSystem, Props}
+import akka.pattern.ask
+import scala.concurrent.duration._
+import akka.util.Timeout
 import org.json4s.{DefaultFormats, Formats}
-import org.kolokolov.slick.DBprofiles.{DatabaseProfile, PostgresDatabase}
-import org.kolokolov.slick.model.{Group, User}
+import org.kolokolov.slick.DBprofiles.DatabaseProfile
+import org.kolokolov.slick.model.User
 import org.kolokolov.slick.service.{UserGroupService, UserService}
-import org.scalatra.{AsyncResult, FutureSupport, ScalatraServlet}
+import org.scalatra.{FutureSupport, ScalatraServlet}
 import org.scalatra.json.JacksonJsonSupport
 import org.slf4j.LoggerFactory
 
 import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Success, Try}
+import scala.language.postfixOps
 
 /**
   * Created by Alexey Kolokolov on 03.04.2017.
@@ -32,6 +35,9 @@ class UserController(system: ActorSystem)
   protected lazy val userService = new UserService(profile)
   protected lazy val userGroupService = new UserGroupService(profile)
 
+  private lazy val userActor = system.actorOf(Props(new UserActor(userService, userGroupService)))
+  implicit val timeout = new Timeout(2 seconds)
+
   before() {
     contentType = formats("json")
   }
@@ -39,10 +45,7 @@ class UserController(system: ActorSystem)
   // shows all users
   get("/") {
     logger.debug("get /users is running")
-    new AsyncResult {
-      override val is: Future[Seq[User]] = userService.getAllUsers
-      logger.debug("getAllUsers returned " + is)
-    }
+    userActor ? AllUsers
   }
 
   // shows user with given ID
@@ -51,11 +54,7 @@ class UserController(system: ActorSystem)
     Try {
       params("id").toInt
     } match {
-      case Success(id) => new AsyncResult {
-        logger.debug("User ID has been obtained: " + id)
-        override val is: Future[Option[User]] = userService.getUserById(id)
-        logger.debug("getUserById returned " + is)
-      }
+      case Success(id) => userActor ? UserById(id)
       case Failure(ex) => pass
     }
   }
@@ -65,9 +64,7 @@ class UserController(system: ActorSystem)
     Try {
       params("gid").toInt
     } match {
-      case Success(groupId) => new AsyncResult {
-        override val is: Future[Seq[(User, Group)]] = userGroupService.getUsersByGroupId(groupId)
-      }
+      case Success(groupId) => userActor ? UsersByGroupId(groupId)
       case Failure(ex) => pass
     }
   }
@@ -77,7 +74,7 @@ class UserController(system: ActorSystem)
     Try {
       parsedBody.extract[User]
     } match {
-      case Success(user) => userService.saveUser(user)
+      case Success(user) => userActor ? SaveUser(user)
       case Failure(ex) => pass
     }
   }
@@ -87,7 +84,7 @@ class UserController(system: ActorSystem)
     for {
       userId <- Try(params("uid").toInt)
       groupId <- Try(params("gid").toInt)
-    } yield userGroupService.addUserToGroup(userId,groupId)
+    } yield userActor ? AddUserToGroup(userId, groupId)
   }
 
   // removes user wiht given ID
@@ -95,7 +92,7 @@ class UserController(system: ActorSystem)
     Try {
       params("id").toInt
     } match {
-      case Success(id) => userService.deleteUser(id)
+      case Success(id) => userActor ? DeleteUser(id)
       case Failure(ex) => pass
     }
   }
@@ -105,6 +102,26 @@ class UserController(system: ActorSystem)
     for {
       userId <- Try(params("uid").toInt)
       groupId <- Try(params("gid").toInt)
-    } yield userGroupService.deleteUserFromGroup(userId,groupId)
+    } yield userActor ? DeleteUserFromGroup(userId, groupId)
+  }
+}
+
+case object AllUsers
+case class SaveUser(user: User)
+case class UserById(userId: Int)
+case class UsersByGroupId(userId: Int)
+case class DeleteUser(userId: Int)
+case class AddUserToGroup(userId: Int, groupId: Int)
+case class DeleteUserFromGroup(userId: Int, groupId: Int)
+
+class UserActor(val userService: UserService, val userGroupService: UserGroupService) extends Actor {
+  override def receive: Receive = {
+    case AllUsers => sender ! userService.getAllUsers
+    case userById: UserById => sender ! userService.getUserById(userById.userId)
+    case usersByGroupId: UsersByGroupId => sender ! userGroupService.getUsersByGroupId(usersByGroupId.userId)
+    case saveUser: SaveUser => sender ! userService.saveUser(saveUser.user)
+    case deleteUser: DeleteUser => sender ! userService.deleteUser(deleteUser.userId)
+    case addUserToGroup: AddUserToGroup => sender ! userGroupService.addUserToGroup(addUserToGroup.userId, addUserToGroup.groupId)
+    case deleteUserFromGroup: DeleteUserFromGroup => sender ! userGroupService.deleteUserFromGroup(deleteUserFromGroup.userId, deleteUserFromGroup.groupId)
   }
 }
