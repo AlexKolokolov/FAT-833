@@ -29,7 +29,7 @@ class GroupController(system: ActorSystem)
   override protected implicit def executor: ExecutionContext = system.dispatcher
 
   override protected implicit def jsonFormats: Formats = DefaultFormats
-
+  
   private lazy val groupActor = system.actorOf(Props(new GroupActor(profile)))
 
   implicit val timeout = new Timeout(2 seconds)

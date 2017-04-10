@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory
   */
 object Utils {
 
-  private val logger = LoggerFactory.getLogger("Utils logger")
+  private val logger = LoggerFactory.getLogger(this.getClass)
 
   def main(args: Array[String]): Unit = {
     logger.info("Main method is running")
