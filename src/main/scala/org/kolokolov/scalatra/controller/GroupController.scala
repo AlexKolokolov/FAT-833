@@ -97,7 +97,7 @@ class GroupActor(val groupService: GroupService, val userGroupService: UserGroup
     case AllGroups => sender ! groupService.getAllGroups
     case groupById: GroupById => sender ! groupService.getGroupById(groupById.groupId)
     case groupByUserId: GroupsByUserId => sender ! userGroupService.getGroupsByUserId(groupByUserId.userId)
-    case saveGroup: SaveGroup => sender ! groupService.saveGroup(saveGroup.group)
-    case deleteGroup: DeleteGroup => sender ! groupService.deleteGroup(deleteGroup.groupId)
+    case saveGroup: SaveGroup => groupService.saveGroup(saveGroup.group)
+    case deleteGroup: DeleteGroup => groupService.deleteGroup(deleteGroup.groupId)
   }
 }

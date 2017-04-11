@@ -65,10 +65,18 @@ class UserControllerTest extends ScalatraSuite
     }
   }
 
-  test("GET /users/group/2 should return [] after POST /users/2/2") {
+  test("GET /users/group/2 should include {name:Ron Perlman,id:2} after POST /users/2/2") {
     post("/users/2/2") {
       get("/users/group/2") {
         body should include ("Ron Perlman")
+      }
+    }
+  }
+
+  test("GET /users should include {name:Elvis Presley,id:4} after POST /users with {name:Elvis Presley,id:0}") {
+    post("/users","{\"name\":\"Elvis Presley\",\"id\":0}") {
+      get("/users") {
+        body should include ("Elvis Presley")
       }
     }
   }
