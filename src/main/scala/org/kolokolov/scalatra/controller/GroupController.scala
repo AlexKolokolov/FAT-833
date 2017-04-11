@@ -1,16 +1,19 @@
 package org.kolokolov.scalatra.controller
 
-import akka.actor.ActorSystem
-import dispatch.Future
+import akka.actor.{Actor, ActorSystem, Props}
+import akka.pattern.ask
+import scala.concurrent.duration._
+import akka.util.Timeout
 import org.json4s.{DefaultFormats, Formats}
-import org.kolokolov.slick.DBprofiles.{DatabaseProfile, PostgresDatabase}
-import org.kolokolov.slick.model.{Group, User}
+import org.kolokolov.slick.DBprofiles.DatabaseProfile
+import org.kolokolov.slick.model.Group
 import org.kolokolov.slick.service.{GroupService, UserGroupService}
-import org.scalatra.{AsyncResult, FutureSupport, ScalatraServlet}
+import org.scalatra.{FutureSupport, ScalatraServlet}
 import org.scalatra.json.JacksonJsonSupport
 
 import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Success, Try}
+import scala.language.postfixOps
 
 /**
   * Created by Alexey Kolokolov on 05.04.2017.
@@ -29,15 +32,17 @@ class GroupController(system: ActorSystem)
   protected lazy val groupService = new GroupService(profile)
   protected lazy val userGroupService = new UserGroupService(profile)
 
+  private lazy val groupActor = system.actorOf(Props(new GroupActor(groupService, userGroupService)))
+
+  implicit val timeout = new Timeout(2 seconds)
+
   before() {
     contentType = formats("json")
   }
 
   // shows all groups
   get("/") {
-    new AsyncResult {
-      override val is: Future[Seq[Group]] = groupService.getAllGroups
-    }
+    groupActor ? AllGroups
   }
 
   // shows group with given ID
@@ -45,9 +50,7 @@ class GroupController(system: ActorSystem)
     Try {
       params("id").toInt
     } match {
-      case Success(id) => new AsyncResult {
-        override val is: Future[Option[Group]] = groupService.getGroupById(id)
-      }
+      case Success(id) => groupActor ? GroupById(id)
       case Failure(ex) => pass
     }
   }
@@ -57,9 +60,7 @@ class GroupController(system: ActorSystem)
     Try {
       params("uid").toInt
     } match {
-      case Success(userId) => new AsyncResult {
-        override val is: Future[Seq[(Group, User)]] = userGroupService.getGroupsByUserId(userId)
-      }
+      case Success(userId) => groupActor ? GroupsByUserId(userId)
       case Failure(ex) => pass
     }
   }
@@ -69,7 +70,7 @@ class GroupController(system: ActorSystem)
     Try {
       parsedBody.extract[Group]
     } match {
-      case Success(group) => groupService.saveGroup(group)
+      case Success(group) => groupActor ? SaveGroup(group)
       case Failure(ex) => pass
     }
   }
@@ -79,8 +80,24 @@ class GroupController(system: ActorSystem)
     Try {
       params("id").toInt
     } match {
-      case Success(id) => groupService.deleteGroup(id)
+      case Success(id) => groupActor ? DeleteGroup(id)
       case Failure(ex) => pass
     }
+  }
+}
+
+case object AllGroups
+case class SaveGroup(group: Group)
+case class GroupById(groupId: Int)
+case class GroupsByUserId(userId: Int)
+case class DeleteGroup(groupId: Int)
+
+class GroupActor(val groupService: GroupService, val userGroupService: UserGroupService) extends Actor {
+  override def receive: Receive = {
+    case AllGroups => sender ! groupService.getAllGroups
+    case groupById: GroupById => sender ! groupService.getGroupById(groupById.groupId)
+    case groupByUserId: GroupsByUserId => sender ! userGroupService.getGroupsByUserId(groupByUserId.userId)
+    case saveGroup: SaveGroup => sender ! groupService.saveGroup(saveGroup.group)
+    case deleteGroup: DeleteGroup => sender ! groupService.deleteGroup(deleteGroup.groupId)
   }
 }
