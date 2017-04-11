@@ -1,10 +1,10 @@
 package org.kolokolov.scalatra.integration
 
 import _root_.akka.actor.ActorSystem
-import org.kolokolov.scalatra.controller.{GroupController, UserController}
+import org.kolokolov.scalatra.controller.UserController
 import org.kolokolov.slick.DBprofiles.H2Database
 import org.kolokolov.slick.TestDataBaseManager
-import org.scalatest.{BeforeAndAfterEach, FunSuiteLike}
+import org.scalatest.{AsyncFunSuiteLike, BeforeAndAfterEach}
 import org.scalatra.test.scalatest.ScalatraSuite
 
 import scala.concurrent.Await
@@ -14,7 +14,7 @@ import scala.concurrent.duration.Duration
   * Created by Alexey Kolokolov on 06.04.2017.
   */
 class UserControllerTest extends ScalatraSuite
-  with FunSuiteLike
+  with AsyncFunSuiteLike
   with BeforeAndAfterEach {
 
   val system = ActorSystem()
