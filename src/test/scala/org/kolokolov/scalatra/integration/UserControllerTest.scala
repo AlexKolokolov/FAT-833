@@ -43,9 +43,33 @@ class UserControllerTest extends ScalatraSuite
     }
   }
 
-  test("GET /users/group/2 should return [{name:User,id:1},{name:Bob Marley,id:1}]") {
+  test("GET /users/group/2 should return [{_1:{name:Tom Waits,id:3},_2:{name:Admin,id:2}}]") {
     get("/users/group/2") {
       body should include ("[{\"_1\":{\"name\":\"Tom Waits\",\"id\":3},\"_2\":{\"name\":\"Admin\",\"id\":2}}]")
+    }
+  }
+
+  test("GET /users should return [{name:Bob Marley,id:1},{name:Ron Perlman,id:2}] after DELETE /users/3") {
+    delete("/users/3") {
+      get("/users") {
+        body should not include "Tom Waits"
+      }
+    }
+  }
+
+  test("GET /users/group/2 should return [] after DELETE /users/3/2") {
+    delete("/users/3/2") {
+      get("/users/group/2") {
+        body should include ("[]")
+      }
+    }
+  }
+
+  test("GET /users/group/2 should return [] after POST /users/2/2") {
+    post("/users/2/2") {
+      get("/users/group/2") {
+        body should include ("Ron Perlman")
+      }
     }
   }
 }
