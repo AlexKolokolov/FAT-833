@@ -70,7 +70,7 @@ class GroupController(system: ActorSystem)
     Try {
       parsedBody.extract[Group]
     } match {
-      case Success(group) => groupActor ? SaveGroup(group)
+      case Success(group) => groupActor ! SaveGroup(group)
       case Failure(ex) => pass
     }
   }
@@ -80,7 +80,7 @@ class GroupController(system: ActorSystem)
     Try {
       params("id").toInt
     } match {
-      case Success(id) => groupActor ? DeleteGroup(id)
+      case Success(id) => groupActor ! DeleteGroup(id)
       case Failure(ex) => pass
     }
   }
@@ -97,7 +97,7 @@ class GroupActor(val groupService: GroupService, val userGroupService: UserGroup
     case AllGroups => sender ! groupService.getAllGroups
     case groupById: GroupById => sender ! groupService.getGroupById(groupById.groupId)
     case groupByUserId: GroupsByUserId => sender ! userGroupService.getGroupsByUserId(groupByUserId.userId)
-    case saveGroup: SaveGroup => sender ! groupService.saveGroup(saveGroup.group)
-    case deleteGroup: DeleteGroup => sender ! groupService.deleteGroup(deleteGroup.groupId)
+    case saveGroup: SaveGroup => groupService.saveGroup(saveGroup.group)
+    case deleteGroup: DeleteGroup => groupService.deleteGroup(deleteGroup.groupId)
   }
 }
