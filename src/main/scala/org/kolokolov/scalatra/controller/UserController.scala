@@ -2,17 +2,18 @@ package org.kolokolov.scalatra.controller
 
 import akka.actor.{Actor, ActorSystem, Props}
 import akka.pattern.ask
+
 import scala.concurrent.duration._
 import akka.util.Timeout
 import org.json4s.{DefaultFormats, Formats}
 import org.kolokolov.slick.DBprofiles.DatabaseProfile
 import org.kolokolov.slick.model.User
 import org.kolokolov.slick.service.{UserGroupService, UserService}
-import org.scalatra.{FutureSupport, ScalatraServlet}
+import org.scalatra._
 import org.scalatra.json.JacksonJsonSupport
 import org.slf4j.LoggerFactory
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future, Promise}
 import scala.util.{Failure, Success, Try}
 import scala.language.postfixOps
 
@@ -50,22 +51,24 @@ class UserController(system: ActorSystem)
 
   // shows user with given ID
   get("/:id") {
-    logger.debug("get /users/1 is running")
+    logger.debug("get /users/:id is running")
+    val userId = params("id")
     Try {
-      params("id").toInt
+      userId.toInt
     } match {
       case Success(id) => userActor ? UserById(id)
-      case Failure(ex) => pass
+      case Failure(ex) => BadRequest(s"Illegal parameter '$userId'")
     }
   }
 
   // shows all users in group with given ID
   get("/group/:gid") {
+    val groupId = params("gid")
     Try {
-      params("gid").toInt
+      groupId.toInt
     } match {
-      case Success(groupId) => userActor ? UsersByGroupId(groupId)
-      case Failure(ex) => pass
+      case Success(id) => userActor ? UsersByGroupId(id)
+      case Failure(ex) => BadRequest(s"Illegal parameter '$groupId'")
     }
   }
 
@@ -74,8 +77,11 @@ class UserController(system: ActorSystem)
     Try {
       parsedBody.extract[User]
     } match {
-      case Success(user) => userActor ! SaveUser(user)
-      case Failure(ex) => pass
+      case Success(user) => {
+        userActor ? SaveUser(user)
+        Accepted()
+      }
+      case Failure(ex) => BadRequest("Cannot extract user from request body")
     }
   }
 
@@ -84,16 +90,23 @@ class UserController(system: ActorSystem)
     for {
       userId <- Try(params("uid").toInt)
       groupId <- Try(params("gid").toInt)
-    } yield userActor ! AddUserToGroup(userId, groupId)
+    } yield {
+      userActor ? AddUserToGroup(userId, groupId)
+      Accepted()
+    }
   }
 
   // removes user wiht given ID
   delete("/:id") {
+    val userId = params("id")
     Try {
-      params("id").toInt
+      userId.toInt
     } match {
-      case Success(id) => userActor ! DeleteUser(id)
-      case Failure(ex) => pass
+      case Success(id) => {
+        userActor ? DeleteUser(id)
+        Accepted()
+      }
+      case Failure(ex) => BadRequest(s"Illegal parameter '$userId'")
     }
   }
 
@@ -103,7 +116,10 @@ class UserController(system: ActorSystem)
     for {
       userId <- Try(params("uid").toInt)
       groupId <- Try(params("gid").toInt)
-    } yield userActor ! DeleteUserFromGroup(userId, groupId)
+    } yield {
+      userActor ? DeleteUserFromGroup(userId, groupId)
+      Accepted()
+    }
   }
 }
 
@@ -120,9 +136,9 @@ class UserActor(val userService: UserService, val userGroupService: UserGroupSer
     case AllUsers => sender ! userService.getAllUsers
     case userById: UserById => sender ! userService.getUserById(userById.userId)
     case usersByGroupId: UsersByGroupId => sender ! userGroupService.getUsersByGroupId(usersByGroupId.userId)
-    case saveUser: SaveUser => userService.saveUser(saveUser.user)
-    case deleteUser: DeleteUser => userService.deleteUser(deleteUser.userId)
-    case addUserToGroup: AddUserToGroup => userGroupService.addUserToGroup(addUserToGroup.userId, addUserToGroup.groupId)
-    case deleteUserFromGroup: DeleteUserFromGroup => userGroupService.deleteUserFromGroup(deleteUserFromGroup.userId, deleteUserFromGroup.groupId)
+    case saveUser: SaveUser => sender ! userService.saveUser(saveUser.user)
+    case deleteUser: DeleteUser => sender ! userService.deleteUser(deleteUser.userId)
+    case addUserToGroup: AddUserToGroup => sender ! userGroupService.addUserToGroup(addUserToGroup.userId, addUserToGroup.groupId)
+    case deleteUserFromGroup: DeleteUserFromGroup => sender ! userGroupService.deleteUserFromGroup(deleteUserFromGroup.userId, deleteUserFromGroup.groupId)
   }
 }
