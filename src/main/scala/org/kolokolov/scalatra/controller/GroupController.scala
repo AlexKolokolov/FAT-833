@@ -70,7 +70,7 @@ class GroupController(system: ActorSystem)
     Try {
       parsedBody.extract[Group]
     } match {
-      case Success(group) => groupActor ? SaveGroup(group)
+      case Success(group) => groupActor ! SaveGroup(group)
       case Failure(ex) => pass
     }
   }
@@ -80,7 +80,7 @@ class GroupController(system: ActorSystem)
     Try {
       params("id").toInt
     } match {
-      case Success(id) => groupActor ? DeleteGroup(id)
+      case Success(id) => groupActor ! DeleteGroup(id)
       case Failure(ex) => pass
     }
   }

@@ -26,7 +26,7 @@ class UserController(system: ActorSystem)
 
   this: DatabaseProfile =>
 
-  private val logger = LoggerFactory.getLogger(this.getClass)
+  private val logger = LoggerFactory.getLogger(classOf[UserController])
 
   override protected implicit def executor: ExecutionContext = system.dispatcher
 
@@ -74,7 +74,7 @@ class UserController(system: ActorSystem)
     Try {
       parsedBody.extract[User]
     } match {
-      case Success(user) => userActor ? SaveUser(user)
+      case Success(user) => userActor ! SaveUser(user)
       case Failure(ex) => pass
     }
   }
@@ -84,7 +84,7 @@ class UserController(system: ActorSystem)
     for {
       userId <- Try(params("uid").toInt)
       groupId <- Try(params("gid").toInt)
-    } yield userActor ? AddUserToGroup(userId, groupId)
+    } yield userActor ! AddUserToGroup(userId, groupId)
   }
 
   // removes user wiht given ID
@@ -92,7 +92,7 @@ class UserController(system: ActorSystem)
     Try {
       params("id").toInt
     } match {
-      case Success(id) => userActor ? DeleteUser(id)
+      case Success(id) => userActor ! DeleteUser(id)
       case Failure(ex) => pass
     }
   }
@@ -103,7 +103,7 @@ class UserController(system: ActorSystem)
     for {
       userId <- Try(params("uid").toInt)
       groupId <- Try(params("gid").toInt)
-    } yield userActor ? DeleteUserFromGroup(userId, groupId)
+    } yield userActor ! DeleteUserFromGroup(userId, groupId)
   }
 }
 
