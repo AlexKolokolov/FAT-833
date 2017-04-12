@@ -99,6 +99,7 @@ class UserController(system: ActorSystem)
 
   // removes user with given ID from group with given ID
   delete("/:uid/:gid") {
+    logger.debug("delete user from group is running")
     for {
       userId <- Try(params("uid").toInt)
       groupId <- Try(params("gid").toInt)
@@ -119,9 +120,9 @@ class UserActor(val userService: UserService, val userGroupService: UserGroupSer
     case AllUsers => sender ! userService.getAllUsers
     case userById: UserById => sender ! userService.getUserById(userById.userId)
     case usersByGroupId: UsersByGroupId => sender ! userGroupService.getUsersByGroupId(usersByGroupId.userId)
-    case saveUser: SaveUser => sender ! userService.saveUser(saveUser.user)
-    case deleteUser: DeleteUser => sender ! userService.deleteUser(deleteUser.userId)
-    case addUserToGroup: AddUserToGroup => sender ! userGroupService.addUserToGroup(addUserToGroup.userId, addUserToGroup.groupId)
-    case deleteUserFromGroup: DeleteUserFromGroup => sender ! userGroupService.deleteUserFromGroup(deleteUserFromGroup.userId, deleteUserFromGroup.groupId)
+    case saveUser: SaveUser => userService.saveUser(saveUser.user)
+    case deleteUser: DeleteUser => userService.deleteUser(deleteUser.userId)
+    case addUserToGroup: AddUserToGroup => userGroupService.addUserToGroup(addUserToGroup.userId, addUserToGroup.groupId)
+    case deleteUserFromGroup: DeleteUserFromGroup => userGroupService.deleteUserFromGroup(deleteUserFromGroup.userId, deleteUserFromGroup.groupId)
   }
 }
