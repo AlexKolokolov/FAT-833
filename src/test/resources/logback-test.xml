@@ -7,16 +7,8 @@
         </encoder>
     </appender>
 
-    <appender name="PFILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <appender name="PFILE" class="ch.qos.logback.core.FileAppender">
         <file>logs/project-test-debug.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <FileNamePattern>logs/project-test-%i-log.zip</FileNamePattern>
-            <MinIndex>1</MinIndex>
-            <MaxIndex>10</MaxIndex>
-        </rollingPolicy>
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <MaxFileSize>2MB</MaxFileSize>
-        </triggeringPolicy>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>
                 %d{HH:mm:ss.SSS} %-5level [%thread] %logger{128} - %msg%n
@@ -25,15 +17,10 @@
     </appender>
 
     <appender name="CFILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/common-test-debug.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <FileNamePattern>logs/common-test-%i-log.zip</FileNamePattern>
-            <MinIndex>1</MinIndex>
-            <MaxIndex>10</MaxIndex>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/%d{yyyy-MM-dd}/common-test-%d{HH-mm}.log</fileNamePattern>
+            <maxHistory>5</maxHistory>
         </rollingPolicy>
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <MaxFileSize>2MB</MaxFileSize>
-        </triggeringPolicy>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>
                 %d{HH:mm:ss.SSS} %-5level [%thread] %logger{128} - %msg%n
