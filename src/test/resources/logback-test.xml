@@ -7,16 +7,20 @@
         </encoder>
     </appender>
 
-    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/test-debug.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-            <FileNamePattern>/path/to/info.%i.log.zip</FileNamePattern>
-            <MinIndex>1</MinIndex>
-            <MaxIndex>10</MaxIndex>
+    <appender name="PFILE" class="ch.qos.logback.core.FileAppender">
+        <file>logs/project-test-debug.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>
+                %d{HH:mm:ss.SSS} %-5level [%thread] %logger{128} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="CFILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/%d{yyyy-MM-dd}/common-test-%d{HH-mm}.log</fileNamePattern>
+            <maxHistory>5</maxHistory>
         </rollingPolicy>
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <MaxFileSize>2MB</MaxFileSize>
-        </triggeringPolicy>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>
                 %d{HH:mm:ss.SSS} %-5level [%thread] %logger{128} - %msg%n
@@ -25,10 +29,11 @@
     </appender>
 
     <logger name="org.kolokolov" level="DEBUG">
-        <appender-ref ref="FILE" />
+        <appender-ref ref="PFILE" />
     </logger>
 
     <root level="INFO">
         <appender-ref ref="STDOUT" />
+        <appender-ref ref="CFILE" />
     </root>
 </configuration>
