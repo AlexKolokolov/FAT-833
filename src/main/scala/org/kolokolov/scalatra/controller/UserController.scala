@@ -52,12 +52,17 @@ class UserController(system: ActorSystem)
   // shows user with given ID
   get("/:id") {
     logger.debug("get /users/:id is running")
-    val userId = params("id")
+    val id = params("id")
     Try {
-      userId.toInt
+      id.toInt
     } match {
-      case Success(id) => userActor ? UserById(id)
-      case Failure(ex) => BadRequest(s"Illegal parameter '$userId'")
+      case Success(userId) => userActor ? UserById(userId) map {
+        case userPromise: Promise[Any] => userPromise.future.map {
+          case user: Some[Any] => Ok(user.get)
+          case None => NotFound(s"User with id: $userId was not found")
+        }
+      }
+      case Failure(ex) => BadRequest(s"Illegal parameter '$id'")
     }
   }
 
