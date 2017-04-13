@@ -7,13 +7,13 @@ import scala.concurrent.duration._
 import akka.util.Timeout
 import org.json4s.{DefaultFormats, Formats}
 import org.kolokolov.slick.DBprofiles.DatabaseProfile
-import org.kolokolov.slick.model.User
+import org.kolokolov.slick.model.{Error, User}
 import org.kolokolov.slick.service.{UserGroupService, UserService}
 import org.scalatra._
 import org.scalatra.json.JacksonJsonSupport
 import org.slf4j.LoggerFactory
 
-import scala.concurrent.{ExecutionContext, Future, Promise}
+import scala.concurrent.{ExecutionContext, Promise}
 import scala.util.{Failure, Success, Try}
 import scala.language.postfixOps
 
@@ -59,21 +59,21 @@ class UserController(system: ActorSystem)
       case Success(userId) => userActor ? UserById(userId) map {
         case userPromise: Promise[Any] => userPromise.future.map {
           case user: Some[Any] => Ok(user.get)
-          case None => NotFound(s"User with id: $userId was not found")
+          case None => NotFound(Error(s"User with id: $userId was not found"))
         }
       }
-      case Failure(ex) => BadRequest(s"Illegal parameter '$id'")
+      case Failure(ex) => BadRequest(Error(s"Illegal parameter '$id'"))
     }
   }
 
   // shows all users in group with given ID
   get("/group/:gid") {
-    val groupId = params("gid")
+    val gId = params("gid")
     Try {
-      groupId.toInt
+      gId.toInt
     } match {
-      case Success(id) => userActor ? UsersByGroupId(id)
-      case Failure(ex) => BadRequest(s"Illegal parameter '$groupId'")
+      case Success(groupId) => userActor ? UsersByGroupId(groupId)
+      case Failure(ex) => BadRequest(Error(s"Illegal parameter '$gId'"))
     }
   }
 
@@ -86,7 +86,7 @@ class UserController(system: ActorSystem)
         userActor ? SaveUser(user)
         Accepted()
       }
-      case Failure(ex) => BadRequest("Cannot extract user from request body")
+      case Failure(ex) => BadRequest(Error("Cannot extract user from request body"))
     }
   }
 
@@ -111,7 +111,7 @@ class UserController(system: ActorSystem)
         userActor ? DeleteUser(id)
         Accepted()
       }
-      case Failure(ex) => BadRequest(s"Illegal parameter '$userId'")
+      case Failure(ex) => BadRequest(Error(s"Illegal parameter '$userId'"))
     }
   }
 
