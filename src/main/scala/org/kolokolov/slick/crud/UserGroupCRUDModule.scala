@@ -2,6 +2,7 @@ package org.kolokolov.slick.crud
 
 import org.kolokolov.slick.DBprofiles.DatabaseProfile
 import org.kolokolov.slick.model.{Group, User, UserGroup}
+import org.slf4j.LoggerFactory
 
 import scala.concurrent.Future
 
@@ -27,11 +28,14 @@ trait UserGroupCRUDModule {
 
   object UserGroupCRUD {
 
+    private val logger = LoggerFactory.getLogger(this.getClass)
+
     lazy val dataTable = TableQuery[UserGroupTable]
     lazy val userTable = UserCRUD.dataTable
     lazy val groupTable = GroupCRUD.dataTable
 
     def addUserToGroup(userId: Int, groupId: Int): Future[Int] = {
+      logger.debug("addUserToGroup is running with userId: {} and groupId: {}", userId, groupId)
       val addUserToGroupAction = dataTable += UserGroup(userId,groupId)
       dataBase.run(addUserToGroupAction)
     }

@@ -82,9 +82,11 @@ class UserController(system: ActorSystem)
     Try {
       parsedBody.extract[User]
     } match {
-      case Success(user) => {
-        userActor ? SaveUser(user)
-        Accepted()
+      case Success(user) => userActor ? SaveUser(user) map {
+        case promise: Promise[Any] => promise.future.map {
+          case 1 => Accepted()
+          case _ => Conflict(Error(s"User $user was not persisted to database"))
+        }
       }
       case Failure(ex) => BadRequest(Error("Cannot extract user from request body"))
     }
@@ -92,26 +94,37 @@ class UserController(system: ActorSystem)
 
   // adds user with given ID to group with given ID
   post("/:uid/:gid") {
-    for {
-      userId <- Try(params("uid").toInt)
-      groupId <- Try(params("gid").toInt)
-    } yield {
-      userActor ? AddUserToGroup(userId, groupId)
-      Accepted()
+    Try {
+      params("uid").toInt
+    } match {
+      case Success(userId) => {
+        Try {
+          params("gid").toInt
+        } match {
+          case Success(groupId) => userActor ? AddUserToGroup(userId,groupId) map {
+            case promise: Promise[Any] => promise.future.map {
+              case 1 => Accepted()
+              case _ => Conflict(Error(s"User with id: $userId was not added to group with id: $groupId"))
+            }
+          }
+        }
+      }
     }
   }
 
-  // removes user wiht given ID
+  // removes user with given ID
   delete("/:id") {
-    val userId = params("id")
+    val id = params("id")
     Try {
-      userId.toInt
+      id.toInt
     } match {
-      case Success(id) => {
-        userActor ? DeleteUser(id)
-        Accepted()
+      case Success(userId) => userActor ? DeleteUser(userId) map {
+        case promise: Promise[Any] => promise.future.map {
+          case 1 => Accepted()
+          case _ => NotFound(Error(s"User with id: $userId was not found"))
+        }
       }
-      case Failure(ex) => BadRequest(Error(s"Illegal parameter '$userId'"))
+      case Failure(ex) => BadRequest(Error(s"Illegal parameter '$id'"))
     }
   }
 
@@ -121,9 +134,11 @@ class UserController(system: ActorSystem)
     for {
       userId <- Try(params("uid").toInt)
       groupId <- Try(params("gid").toInt)
-    } yield {
-      userActor ? DeleteUserFromGroup(userId, groupId)
-      Accepted()
+    } yield userActor ? DeleteUserFromGroup(userId, groupId) map {
+      case promise: Promise[Any] => promise.future.map {
+        case 1 => Accepted()
+        case _ => NotFound(Error(s"User with id: $userId was not found in group with id: $groupId"))
+      }
     }
   }
 }
