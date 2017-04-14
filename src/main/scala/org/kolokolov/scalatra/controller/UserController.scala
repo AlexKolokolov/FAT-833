@@ -2,6 +2,8 @@ package org.kolokolov.scalatra.controller
 
 import akka.actor.{Actor, ActorSystem, Props}
 import akka.pattern.ask
+import akka.pattern.pipe
+import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.concurrent.duration._
 import akka.util.Timeout
@@ -13,7 +15,7 @@ import org.scalatra._
 import org.scalatra.json.JacksonJsonSupport
 import org.slf4j.LoggerFactory
 
-import scala.concurrent.{ExecutionContext, Promise}
+import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Success, Try}
 import scala.language.postfixOps
 
@@ -57,10 +59,8 @@ class UserController(system: ActorSystem)
       id.toInt
     } match {
       case Success(userId) => userActor ? UserById(userId) map {
-        case userPromise: Promise[Any] => userPromise.future.map {
-          case user: Some[Any] => Ok(user.get)
-          case None => NotFound(Error(s"User with id: $userId was not found"))
-        }
+        case Some(user) => Ok(user)
+        case None => NotFound(Error(s"User with id: $id was not found"))
       }
       case Failure(ex) => BadRequest(Error(s"Illegal parameter '$id'"))
     }
@@ -83,10 +83,8 @@ class UserController(system: ActorSystem)
       parsedBody.extract[User]
     } match {
       case Success(user) => userActor ? SaveUser(user) map {
-        case promise: Promise[Any] => promise.future.map {
-          case 1 => Accepted()
-          case _ => Conflict(Error(s"User $user was not persisted to database"))
-        }
+        case 1 => Accepted()
+        case _ => Conflict(Error(s"User $user was not persisted to database"))
       }
       case Failure(ex) => BadRequest(Error("Cannot extract user from request body"))
     }
@@ -94,21 +92,23 @@ class UserController(system: ActorSystem)
 
   // adds user with given ID to group with given ID
   post("/:uid/:gid") {
+    val uid = params("uid")
     Try {
-      params("uid").toInt
+      uid.toInt
     } match {
       case Success(userId) => {
+        val gid = params("gid")
         Try {
-          params("gid").toInt
+          gid.toInt
         } match {
           case Success(groupId) => userActor ? AddUserToGroup(userId,groupId) map {
-            case promise: Promise[Any] => promise.future.map {
-              case 1 => Accepted()
-              case _ => Conflict(Error(s"User with id: $userId was not added to group with id: $groupId"))
-            }
+            case 1 => Accepted()
+            case _ => Conflict(Error(s"User with id: $userId was not added to group with id: $groupId"))
           }
+          case Failure(ex) => BadRequest(Error(s"Illegal parameter '$gid'"))
         }
       }
+      case Failure(ex) => BadRequest(Error(s"Illegal parameter '$uid'"))
     }
   }
 
@@ -119,10 +119,8 @@ class UserController(system: ActorSystem)
       id.toInt
     } match {
       case Success(userId) => userActor ? DeleteUser(userId) map {
-        case promise: Promise[Any] => promise.future.map {
-          case 1 => Accepted()
-          case _ => NotFound(Error(s"User with id: $userId was not found"))
-        }
+        case 1 => Accepted()
+        case _ => NotFound(Error(s"User with id: $userId was not found"))
       }
       case Failure(ex) => BadRequest(Error(s"Illegal parameter '$id'"))
     }
@@ -131,14 +129,23 @@ class UserController(system: ActorSystem)
   // removes user with given ID from group with given ID
   delete("/:uid/:gid") {
     logger.debug("delete user from group is running")
-    for {
-      userId <- Try(params("uid").toInt)
-      groupId <- Try(params("gid").toInt)
-    } yield userActor ? DeleteUserFromGroup(userId, groupId) map {
-      case promise: Promise[Any] => promise.future.map {
-        case 1 => Accepted()
-        case _ => NotFound(Error(s"User with id: $userId was not found in group with id: $groupId"))
+    val uid = params("uid")
+    Try {
+      uid.toInt
+    } match {
+      case Success(userId) => {
+        val gid = params("gid")
+        Try {
+          gid.toInt
+        } match {
+          case Success(groupId) => userActor ? DeleteUserFromGroup(userId,groupId) map {
+            case 1 => Accepted()
+            case _ => Conflict(Error(s"User with id: $userId was not found in group with id: $groupId"))
+          }
+          case Failure(ex) => BadRequest(Error(s"Illegal parameter '$gid'"))
+        }
       }
+      case Failure(ex) => BadRequest(Error(s"Illegal parameter '$uid'"))
     }
   }
 }
@@ -153,12 +160,12 @@ case class DeleteUserFromGroup(userId: Int, groupId: Int)
 
 class UserActor(val userService: UserService, val userGroupService: UserGroupService) extends Actor {
   override def receive: Receive = {
-    case AllUsers => sender ! userService.getAllUsers
-    case userById: UserById => sender ! userService.getUserById(userById.userId)
-    case usersByGroupId: UsersByGroupId => sender ! userGroupService.getUsersByGroupId(usersByGroupId.userId)
-    case saveUser: SaveUser => sender ! userService.saveUser(saveUser.user)
-    case deleteUser: DeleteUser => sender ! userService.deleteUser(deleteUser.userId)
-    case addUserToGroup: AddUserToGroup => sender ! userGroupService.addUserToGroup(addUserToGroup.userId, addUserToGroup.groupId)
-    case deleteUserFromGroup: DeleteUserFromGroup => sender ! userGroupService.deleteUserFromGroup(deleteUserFromGroup.userId, deleteUserFromGroup.groupId)
+    case AllUsers => userService.getAllUsers.pipeTo(sender)
+    case userById: UserById => userService.getUserById(userById.userId).pipeTo(sender)
+    case usersByGroupId: UsersByGroupId => userGroupService.getUsersByGroupId(usersByGroupId.userId).pipeTo(sender)
+    case saveUser: SaveUser => userService.saveUser(saveUser.user).pipeTo(sender)
+    case deleteUser: DeleteUser => userService.deleteUser(deleteUser.userId).pipeTo(sender)
+    case addUserToGroup: AddUserToGroup => userGroupService.addUserToGroup(addUserToGroup.userId, addUserToGroup.groupId).pipeTo(sender)
+    case deleteUserFromGroup: DeleteUserFromGroup => userGroupService.deleteUserFromGroup(deleteUserFromGroup.userId, deleteUserFromGroup.groupId).pipeTo(sender)
   }
 }
